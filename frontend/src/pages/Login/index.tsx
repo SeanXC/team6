@@ -1,9 +1,18 @@
 import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 import React from 'react';
 
 function Login(): React.ReactElement {
 	const googlelogin = useGoogleLogin({
-		onSuccess: tokenResponse => console.log(tokenResponse),
+		onSuccess: tokenResponse => (
+			axios.post('https://team6-production.up.railway.app/google', tokenResponse)
+			.then(function (response) {
+				console.log(response);
+			})
+			.catch(function (error) {
+				console.log(error);
+			})
+		),
 		onError: error => console.log(error),
 	});
 
