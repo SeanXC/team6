@@ -1,0 +1,35 @@
+# 1️⃣ Use Node.js to build the frontend
+FROM node:18 AS builder
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and lock file first (for better caching)
+COPY package.json package-lock.json ./
+
+# Install dependencies (force clean install)
+RUN npm install --legacy-peer-deps
+
+# Copy the rest of the app files
+COPY . .
+
+# Build the React app (Vite will output to /dist)
+RUN npm run build
+
+# 2️⃣ Use NGINX to serve the frontend
+FROM nginx:alpine
+
+# Set working directory inside the NGINX container
+WORKDIR /usr/share/nginx/html
+
+# Remove the default NGINX static files
+RUN rm -rf ./*
+
+# Copy built frontend files from builder stage
+COPY --from=builder /app/dist .
+
+# Expose port 80 for web traffic
+EXPOSE 80
+
+# Start NGINX server
+CMD ["nginx", "-g", "daemon off;"]
