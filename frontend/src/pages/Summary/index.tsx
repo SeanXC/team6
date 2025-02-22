@@ -4,8 +4,8 @@ import ExplanationText from './ExplanationText';
 import AudioPlayer from './AudioPlayer';
 
 function SummaryPage() {
-	const params = useParams();
-	const id = params.id;
+	// const params = useParams();
+	// const id = params.id;
 
 	const demoText = `Lorem ipsum odor amet, consectetuer adipiscing elit. Mollis ipsum viverra vestibulum commodo metus nascetur non rutrum morbi. Ultrices turpis suspendisse magna feugiat; non sem neque. Aenean convallis vel imperdiet risus leo suscipit cursus. Urna sodales inceptos class pellentesque sodales mattis cras suscipit luctus. Aenean mus aliquet quis iaculis consequat iaculis. Felis curae diam euismod eu consequat eget? Interdum primis ultricies metus platea neque sociosqu consequat mollis venenatis. Mattis cras interdum nunc netus litora risus sociosqu. Dictum ornare adipiscing, augue volutpat gravida hendrerit.
 
