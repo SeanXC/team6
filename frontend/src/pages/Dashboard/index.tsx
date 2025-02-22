@@ -5,7 +5,7 @@ import UserFooter from './UserFooter';
 import InfoTab from './InfoTab';
 import axios from 'axios';
 import SummaryDisplay from '../Summary/SummaryDisplay';
-import AudioPlayer from '../Summary/AudioPlayer';
+import AudioPlayer from '../Summary/AudioTutorGenerator';
 
 function Dashboard() {
 	const navigate = useNavigate();

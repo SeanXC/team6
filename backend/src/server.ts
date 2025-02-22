@@ -41,7 +41,10 @@ app.use(
         },
     })
 );
-
+app.use(
+  "/audio",
+  express.static(path.join(__dirname, "..", "public", "audio"))
+);
 // ✅ Initialize Passport (AFTER session middleware)
 app.use(passport.initialize());
 app.use(passport.session());
