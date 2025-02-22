@@ -67,8 +67,9 @@ function UploadPage() {
 				</div>
 				<span className='text-red-400'>{errorMessage}</span>
 				<>
-					{
+					{ !loading ? (
 						fileSelected ? <span className='text-green-400'>Selected: {file?.name}</span> : null
+					) : <Spinner />
 					}
 				</>
 			</div>
