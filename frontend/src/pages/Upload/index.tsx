@@ -1,9 +1,13 @@
+import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function UploadPage() {
+  const navigate = useNavigate();
 	const [file, setFile] = useState<File>();
 	const [errorMessage, setErrorMessage] = useState('');
 	const [fileSelected, setFileSelected] = useState(true);
+  const token = localStorage.getItem("token");
 
 	useEffect(() => {
 		setFileSelected(file !== undefined);
@@ -23,8 +27,29 @@ function UploadPage() {
 		}
 	}
 
-	function handleUploadClick() {
-		// todo: send to backend
+	async function handleUploadClick() {
+		if (!file) return;
+
+		const formData = new FormData();
+		formData.append("file", file);
+
+		try {
+			const res = await axios.post(
+				"https://team6-production.up.railway.app/document/upload",
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			console.log("res", res.data);
+      navigate("/dashboard");
+		} catch (error) {
+			console.error("❌ Profile Update Error:", error);
+		}
 	}
 
 	return (
