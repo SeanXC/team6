@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import fs from "fs";
 import pdfParse from "pdf-parse";
 import Document from "../models/Document";
+import { summarizeText } from "../services/ai.service";
 
 // ✅ Ensure `req.user` follows the `authenticate` middleware format
 interface AuthenticatedRequest extends Request {
@@ -77,4 +78,39 @@ export const getDocuments:any = async (req: AuthenticatedRequest, res: Response)
       console.error("❌ Error fetching documents:", error);
       res.status(500).json({ error: "Failed to fetch documents!" });
     }
-  };
+};
+
+// ✅ Summarize a Specific Document (Authenticated Users Only)
+export const summarizeDocument:any = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      if (!req.user || !req.user.userId) {
+        res.status(401).json({ error: "Unauthorized: No valid user found." });
+        return;
+      }
+  
+      const { documentId } = req.params;
+      const userId = req.user.userId;
+  
+      // ✅ Ensure document belongs to the authenticated user
+      const document = await Document.findOne({ _id: documentId, userId });
+  
+      if (!document) {
+        res.status(404).json({ error: "Document not found or access denied." });
+        return;
+      }
+  
+      console.log("📄 Summarizing Document:", document.filename);
+  
+      // ✅ Summarize text using AI
+      const summary = await summarizeText(document.text);
+  
+      res.json({
+        message: "Document summarized successfully!",
+        documentId: document._id,
+        summary,
+      });
+    } catch (error) {
+      console.error("❌ Error summarizing document:", error);
+      res.status(500).json({ error: "Failed to summarize document!" });
+    }
+};
