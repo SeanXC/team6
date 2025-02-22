@@ -10,7 +10,7 @@ function InfoTab() {
 	const user: User = storedUser ? JSON.parse(storedUser) : null;
 	const [interestsList, setInterestsList] = useState<string[]>(user.interests ?? []);
 
-	const inputRef = useRef<HTMLInputElement>(null);
+	const [input, setInput] = useState<string>('')
 
 	function removeItemFromList(item: string) {
 		const indexToRemove = interestsList.indexOf(item);
@@ -45,32 +45,37 @@ function InfoTab() {
 	}
 
 	async function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-		const text = inputRef.current?.value.trim();
-		
-		if (!text || !inputRef.current) {
+		if (!input) {
 			// do nothing if text box empty
 			return;
 		}
 
 		if (e.key === 'Enter') {
-			const listClone = [...interestsList];
-
-			listClone.push(text);
-
-			setInterestsList(listClone);
-  
-			sendUpdatedInterestsList(listClone);
-
-			inputRef.current.value = '';
+			addInterest();
 		}
+	}
+
+	const addInterest = () => {
+		const listClone = [...interestsList];
+
+		listClone.push(input);
+
+		setInterestsList(listClone);
+
+		sendUpdatedInterestsList(listClone);
+
+		setInput('');
 	}
 
 	return (
 		<div className="grow flex flex-col bg-gray-700 p-4 rounded-xl">
 			<span className='text-3xl !font-semibold pb-4'>Hello, {user.name}</span>
 			<span className='text-xl'>Any new interests?</span>
-			<input onKeyDown={handleInputKeyDown} ref={inputRef} type="text" className='w-full bg-gray-800 p-2 rounded-xl mt-2' placeholder='If so, enter them here...' />
-			<InterestsList list={interestsList} onRemoveItem={removeItemFromList} />
+			<div className='relative'>
+				<input onKeyDown={handleInputKeyDown} value={input} onChange={e => setInput(e.target.value)} type="text" className='w-full bg-gray-800 p-2 rounded-xl mt-2' placeholder='If so, enter them here...' />
+				<button className='absolute right-0 bottom-0 py-2 px-4 cursor-pointer' onClick={addInterest}>add</button>
+			</div>
+				<InterestsList list={interestsList} onRemoveItem={removeItemFromList} />
 		</div>
 	);
 }
