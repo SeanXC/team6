@@ -4,6 +4,7 @@ import pdfParse from "pdf-parse";
 import Document from "../models/Document";
 import { askDocumentQuestion, convertTextToSpeech, generateFunExplanation, summarizeText } from "../services/ai.service";
 import User from "../models/User";
+import path from "path";
 
 // ✅ Ensure `req.user` follows the `authenticate` middleware format
 interface AuthenticatedRequest extends Request {
@@ -11,6 +12,7 @@ interface AuthenticatedRequest extends Request {
 }
 
 // ✅ Upload & Process Document (Authenticated Users Only)
+
 export const uploadDocument:any = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (!req.user || !req.user.userId) {
@@ -23,13 +25,22 @@ export const uploadDocument:any = async (req: AuthenticatedRequest, res: Respons
       return;
     }
 
-    console.log("📂 File Uploaded:", req.file.path);
+    // ✅ Ensure `uploads/` directory exists
+    const uploadDir = path.join(__dirname, "../../uploads");
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+      console.log("📂 Created 'uploads' directory.");
+    }
 
-    // ✅ Read uploaded file
-    const fileBuffer = fs.readFileSync(req.file.path);
+    // ✅ Define the file path
+    const filePath = path.join(uploadDir, req.file.originalname);
+
+    // ✅ Write file to the server
+    fs.writeFileSync(filePath, req.file.buffer);
+    console.log("📂 File saved:", filePath);
 
     // ✅ Extract text from PDF
-    const data = await pdfParse(fileBuffer);
+    const data = await pdfParse(req.file.buffer);
     const extractedText = data.text.trim();
 
     console.log("📄 Extracted Text:", extractedText);
@@ -42,11 +53,7 @@ export const uploadDocument:any = async (req: AuthenticatedRequest, res: Respons
     });
 
     await newDocument.save();
-
     console.log("✅ Document saved successfully:", newDocument);
-
-    // ✅ Cleanup: Delete file after processing
-    fs.unlinkSync(req.file.path);
 
     res.json({
       message: "Document processed and saved successfully!",
@@ -57,7 +64,6 @@ export const uploadDocument:any = async (req: AuthenticatedRequest, res: Respons
     res.status(500).json({ error: "Failed to process document!" });
   }
 };
-
 // ✅ Fetch Only Documents Uploaded by the Authenticated User
 export const getDocuments:any = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {

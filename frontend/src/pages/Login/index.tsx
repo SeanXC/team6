@@ -22,7 +22,7 @@ function Login(): React.ReactElement {
 
         // 🔹 Send the user info to backend for authentication
         const res = await axios.post("https://team6-production.up.railway.app/auth/google", {
-          googleId: userInfo.data.sub,   // Google Unique User ID
+          googleId: userInfo.data.sub,
           name: userInfo.data.name,
           email: userInfo.data.email,
           picture: userInfo.data.picture,
@@ -34,8 +34,12 @@ function Login(): React.ReactElement {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
 
-        // ✅ Redirect user to dashboard
-        navigate("/dashboard");
+        // ✅ Redirect based on profile completion status
+        if (res.data.profileComplete) {
+          navigate("/dashboard");  // If profile is complete, go to dashboard
+        } else {
+          navigate("/update-profile");  // If profile is incomplete, go to update profile page
+        }
       } catch (error) {
         console.error("❌ Google Login Error:", error);
       }
