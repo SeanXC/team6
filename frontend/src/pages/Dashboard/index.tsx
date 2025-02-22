@@ -5,6 +5,7 @@ import UserFooter from './UserFooter';
 import InfoTab from './InfoTab';
 import axios from 'axios';
 import SummaryDisplay from '../Summary/SummaryDisplay';
+import AudioPlayer from '../Summary/AudioPlayer';
 
 function Dashboard() {
 	const navigate = useNavigate();
@@ -59,6 +60,7 @@ function Dashboard() {
 
 	return (
 		<div className="flex flex-row gap-4 box-border h-full">
+			{/* LEFT SECTION: Uploads & Upload Button */}
 			<div className="flex flex-col w-4/12 box-border p-4 pr-0 gap-4">
 				<Link 
 					className='group relative bg-gradient-to-br from-blue-700 to-purple-700 p-4 rounded-xl text-center font-semibold'
@@ -72,9 +74,32 @@ function Dashboard() {
 					<UploadsList uploads={userUploads} />
 				</ul>
 			</div>
+
+			{/* RIGHT SECTION: Info, Summaries & Audio */}
 			<div className='flex flex-col w-8/12 gap-4 p-4 pl-0 box-border'>
 				<InfoTab user={user} />
-				<SummaryDisplay summarizedDocs={summarizedDocs} /> {/* ✅ Show summaries */}
+
+				{/* ✅ Show Summaries & Generate Audio */}
+				<div className="bg-gray-700 p-4 rounded-xl">
+					<h2 className="text-xl font-semibold mb-4 text-white">Summarized Documents</h2>
+
+					{summarizedDocs.length === 0 ? (
+						<p className="text-gray-300">No summaries available.</p>
+					) : (
+						<ul className="space-y-6">
+							{summarizedDocs.map((doc) => (
+								<li key={doc._id} className="bg-gray-800 p-4 rounded-lg shadow-md">
+									<h3 className="font-semibold text-blue-400">{doc.filename}</h3>
+									<p className="text-gray-200 mt-2">{doc.summary}</p>
+
+									{/* ✅ Generate Audio for each Document */}
+									<AudioPlayer documentId={doc._id} />
+								</li>
+							))}
+						</ul>
+					)}
+				</div>
+
 				<UserFooter user={user} />
 			</div>
 		</div>
