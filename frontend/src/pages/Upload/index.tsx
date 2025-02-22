@@ -8,7 +8,7 @@ function UploadPage() {
 	const [file, setFile] = useState<File>();
 	const [errorMessage, setErrorMessage] = useState('');
 	const [fileSelected, setFileSelected] = useState(true);
-	const [loading, setLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false)
   const token = localStorage.getItem("token");
 
 	useEffect(() => {
@@ -67,9 +67,8 @@ function UploadPage() {
 				</div>
 				<span className='text-red-400'>{errorMessage}</span>
 				<>
-					{ !loading ? (
-							fileSelected ? <span className='text-green-400'>Selected: {file?.name}</span> : null
-						): <Spinner />
+					{
+						fileSelected ? <span className='text-green-400'>Selected: {file?.name}</span> : null
 					}
 				</>
 			</div>
