@@ -22,10 +22,10 @@ function Dashboard() {
 			return;
 		}
 
-		const parsedUser = JSON.parse(storedUser);
+		const parsedUser: User = JSON.parse(storedUser);
 		setUser({
 			name: parsedUser.name,
-			pfpUrl: "https://picsum.photos/128",
+			pfpUrl: localStorage.getItem('userPfp') || ""
 		});
 
 		// ✅ Fetch user uploads
