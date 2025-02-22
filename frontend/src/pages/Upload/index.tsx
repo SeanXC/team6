@@ -1,3 +1,4 @@
+import Spinner from '@/components/Spinner';
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +8,7 @@ function UploadPage() {
 	const [file, setFile] = useState<File>();
 	const [errorMessage, setErrorMessage] = useState('');
 	const [fileSelected, setFileSelected] = useState(true);
+	const [loading, setLoading] = useState<boolean>(false)
   const token = localStorage.getItem("token");
 
 	useEffect(() => {
@@ -34,6 +36,7 @@ function UploadPage() {
 		formData.append("file", file);
 
 		try {
+			setLoading(true);
 			const res = await axios.post(
 				"https://team6-production.up.railway.app/document/upload",
 				formData,
@@ -64,8 +67,11 @@ function UploadPage() {
 				</div>
 				<span className='text-red-400'>{errorMessage}</span>
 				<>
-					{
+					{ !loading ? (
 						fileSelected ? <span className='text-green-400'>Selected: {file?.name}</span> : null
+						) : <div className=''>
+							<Spinner />
+						</div>
 					}
 				</>
 			</div>
