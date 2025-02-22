@@ -50,10 +50,11 @@ function Dashboard() {
 		<div className="flex flex-row gap-4 box-border h-full">
 			<div className="flex flex-col w-4/12 box-border p-4 pr-0 gap-4">
 				<Link 
-					className='bg-gradient-to-br from-blue-700 to-purple-700 hover:from-blue-800 hover:to-purple-800 p-4 rounded-xl text-center font-semibold'
+					className='group relative bg-gradient-to-br from-blue-700 to-purple-700 p-4 rounded-xl text-center font-semibold'
 					to="/upload"
 				>
-					Upload a PDF
+					<span>Upload a PDF</span>
+					<div className='absolute top-0 left-0 w-full h-full z-[-1] rounded-xl bg-gradient-to-br from-blue-700 to-purple-700 transition-all duration-300 group-hover:blur-md'></div>
 				</Link>
 
 				<ul className='grow bg-gray-700 rounded-xl overflow-auto'>
