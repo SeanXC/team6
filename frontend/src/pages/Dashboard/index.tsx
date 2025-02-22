@@ -26,7 +26,7 @@ function Dashboard() {
 		const parsedUser = JSON.parse(storedUser);
 		setUser({
 			name: parsedUser.name,
-			pfpUrl: "https://picsum.photos/128", // Placeholder profile picture
+			pfpUrl: localStorage.getItem('userPfp') || '', // Placeholder profile picture
 		});
 
 		// ✅ Fetch user uploads from backend
