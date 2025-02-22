@@ -23,7 +23,7 @@ pnpm-debug.log*
 *.sqlite
 *.sqlite-journal
 *.db
-
+uploads/
 # IDE and OS files
 .DS_Store
 Thumbs.db

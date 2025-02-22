@@ -5,7 +5,7 @@ export interface IUser extends Document {
   googleId: string;
   name: string;
   email: string;
-  age: number | null;
+  age: number | 0;
   interests: string[];
   token?: string;
 }
