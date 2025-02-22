@@ -70,7 +70,7 @@ function Dashboard() {
 				</Link>
 
 				<ul className='grow bg-gray-700 rounded-xl overflow-auto'>
-					<UploadsList uploads={userUploads} />
+					<UploadsList uploads={summarizedDocs} />
 				</ul>
 			</div>
 			<div className='flex flex-col w-8/12 gap-4 p-4 pl-0 box-border'>
