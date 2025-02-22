@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router';
+import { Link } from 'react-router';
 import { IoMdArrowBack } from 'react-icons/io';
 import ExplanationText from './ExplanationText';
 import AudioPlayer from './AudioPlayer';
