@@ -5,7 +5,8 @@ import { uploadDocument,
     getChatHistory,
     chatWithDocument,
     getSingleSummarizedDocument,
-    getSummarizedDocuments
+    getSummarizedDocuments,
+    generateOrRetrieveAudioTutor
 } from "../controllers/document.controller";
 import upload from "../middleware/upload.middleware";
 import { authenticate } from "../middleware/auth.middleware"; // Import authentication middleware
@@ -33,5 +34,8 @@ router.post("/chat/:documentId", authenticate, chatWithDocument);
 
 // ✅ Retrieve chat history for a document
 router.get("/chat/history/:documentId", authenticate, getChatHistory);
+
+// ✅ Retrieve or generate an audio tutor for a document
+router.get("/audio-tutor/:documentId", authenticate, generateOrRetrieveAudioTutor);
 
 export default router;

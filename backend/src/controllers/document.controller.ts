@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import fs from "fs";
 import pdfParse from "pdf-parse";
 import Document from "../models/Document";
-import { askDocumentQuestion, summarizeText } from "../services/ai.service";
+import { askDocumentQuestion, convertTextToSpeech, generateFunExplanation, summarizeText } from "../services/ai.service";
 import User from "../models/User";
 
 // ✅ Ensure `req.user` follows the `authenticate` middleware format
@@ -280,4 +280,67 @@ export const getChatHistory:any = async (req: AuthenticatedRequest, res: Respons
       console.error("❌ Error fetching chat history:", error);
       res.status(500).json({ error: "Failed to fetch chat history!" });
     }
+};
+
+// ✅ Generate or Retrieve Audio-Based Tutor for a Document
+export const generateOrRetrieveAudioTutor:any = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (!req.user || !req.user.userId) {
+      res.status(401).json({ error: "Unauthorized: No valid user found." });
+      return;
+    }
+
+    const { documentId } = req.params;
+    const userId = req.user.userId;
+
+    // ✅ Fetch user details (age & interests)
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ error: "User not found!" });
+      return;
+    }
+
+    const userAge = user.age || 18;
+    const userInterests = user.interests?.length > 0 ? user.interests.join(", ") : "science and technology";
+
+    console.log("🎤 Checking audio tutorial for:", { age: userAge, interests: userInterests });
+
+    // ✅ Ensure the document belongs to the authenticated user
+    const document = await Document.findOne({ _id: documentId, userId });
+
+    if (!document) {
+      res.status(404).json({ error: "Document not found or access denied." });
+      return;
+    }
+
+    // ✅ If audio already exists, return the saved link
+    if (document.audioUrl) {
+      console.log("✅ Returning existing audio file:", document.audioUrl);
+      res.json({
+        message: "Audio tutorial already generated.",
+        documentId: document._id,
+        audioUrl: document.audioUrl,
+      });
+      return;
+    }
+
+    // ✅ Generate a fun, engaging explanation
+    const explanation = await generateFunExplanation(document.text, userAge, userInterests);
+
+    // ✅ Convert explanation into speech
+    const audioUrl = await convertTextToSpeech(explanation, userId, documentId);
+
+    // ✅ Save the generated audio link in the document
+    document.audioUrl = audioUrl;
+    await document.save();
+
+    res.json({
+      message: "Audio tutorial generated successfully!",
+      documentId: document._id,
+      audioUrl,
+    });
+  } catch (error) {
+    console.error("❌ Error generating/retrieving audio tutor:", error);
+    res.status(500).json({ error: "Failed to generate or retrieve audio tutor!" });
+  }
 };
