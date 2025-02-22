@@ -4,13 +4,13 @@ import pdfParse from "pdf-parse";
 import Document from "../models/Document";
 import { askDocumentQuestion, convertTextToSpeech, generateFunExplanation, summarizeText } from "../services/ai.service";
 import User from "../models/User";
-import path from "path";
 
 // ✅ Ensure `req.user` follows the `authenticate` middleware format
 interface AuthenticatedRequest extends Request {
   user?: { userId: string };
 }
 
+// ✅ Upload & Process Document (Authenticated Users Only)
 // ✅ Upload & Process Document (Authenticated Users Only)
 export const uploadDocument:any = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
@@ -24,43 +24,27 @@ export const uploadDocument:any = async (req: AuthenticatedRequest, res: Respons
       return;
     }
 
-    console.log("📂 File Uploaded:", req.file.originalname);
+    console.log("📂 Processing File from Memory...");
 
-    // ✅ Ensure `uploads/` directory exists
-    const uploadDir = path.join(__dirname, "../../uploads");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-      console.log("📂 Created 'uploads' directory.");
-    }
-
-    // ✅ Define file path
-    const filePath = path.join(uploadDir, req.file.originalname);
-
-    // ✅ Save file to disk (from memory)
-    fs.writeFileSync(filePath, req.file.buffer);
-    console.log("📂 File saved successfully:", filePath);
-
-    // ✅ Extract text from PDF
+    // ✅ Extract text from PDF using file buffer
     const data = await pdfParse(req.file.buffer);
     const extractedText = data.text.trim();
 
     console.log("📄 Extracted Text:", extractedText);
 
-    // ✅ Save document to MongoDB
+    // ✅ Save document details in MongoDB
     const newDocument = new Document({
       userId: req.user.userId,
       filename: req.file.originalname,
-      text: extractedText,
+      text: extractedText, // ✅ Store extracted text
     });
 
     await newDocument.save();
-    console.log("✅ Document saved successfully:", newDocument);
 
     res.json({
       message: "Document processed and saved successfully!",
       document: newDocument,
     });
-
   } catch (error) {
     console.error("❌ Error processing document:", error);
     res.status(500).json({ error: "Failed to process document!" });
