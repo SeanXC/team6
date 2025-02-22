@@ -39,8 +39,8 @@ const UploadsList = ({uploads}: UploadListProps) => {
 	return (
 		<div className="flex flex-col items-center">
 			{loaded ? 
-			renderedList : 
-			<UploadListItemsSkeleton />}
+				renderedList : 
+				<UploadListItemsSkeleton />}
 		</div>
 	);
 };

@@ -61,7 +61,7 @@ function Dashboard() {
 	return (
 		<div className="flex flex-row gap-4 box-border h-full">
 			{/* LEFT SECTION: Uploads & Upload Button */}
-			<div className="flex flex-col w-4/12 box-border p-4 pr-0 gap-4">
+			<div className="flex flex-col w-4/12 box-border p-4 pr-0 gap-4 h-max">
 				<Link 
 					className='group relative bg-gradient-to-br from-blue-700 to-purple-700 p-4 rounded-xl text-center font-semibold'
 					to="/upload"
