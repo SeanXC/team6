@@ -98,4 +98,4 @@ export const googleSignIn = async (req: Request, res: Response): Promise<void> =
     console.error('❌ Error during Google Sign-In:', error);
     res.status(500).json({ error: 'Authentication failed. Please try again.' });
   }
-};
+};  
