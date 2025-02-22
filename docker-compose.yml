@@ -1,0 +1,34 @@
+version: '3.8'  # Optional, can be removed
+
+services:
+  backend:
+    build:
+      context: ./backend  # Path to backend Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"  # Expose backend on port 5001
+    environment:
+      NODE_ENV: production
+      MONGO_URI: mongodb://mongo:27017/mydatabase  # MongoDB connection string
+    depends_on:
+      - mongo  # Ensure MongoDB starts before backend
+
+  frontend:
+    build:
+      context: ./frontend  # Path to frontend Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"  # Expose frontend on port 5173
+    depends_on:
+      - backend  # Ensure backend starts before frontend
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"  # Expose MongoDB on default port
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
