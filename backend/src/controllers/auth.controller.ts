@@ -1,12 +1,9 @@
-import { OAuth2Client } from 'google-auth-library';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { Request, Response } from 'express';
 import User, { IUser } from '../models/User';
 
 dotenv.config();
-
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Function to generate JWT
 const generateJWT = (userId: string): string => {
@@ -17,39 +14,17 @@ const generateJWT = (userId: string): string => {
   return jwt.sign({ userId }, secret, { expiresIn: '1h' });
 };
 
-// **Google Login Controller**
+// Google Sign-In Controller (Updated)
 export const googleSignIn = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { token } = req.body;  // ✅ Expecting ID token from frontend
-
-    if (!token) {
-      res.status(400).json({ error: 'ID Token is required' });
-      return;
-    }
-
-    // ✅ Verify Google ID token
-    const ticket = await client.verifyIdToken({
-      idToken: token,  // ✅ Expecting ID token here, NOT access token
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    const payload = ticket.getPayload();
-    console.log("✅ Google ID Token Payload:", payload);
-
-    if (!payload) {
-      res.status(400).json({ error: "Invalid Google ID Token" });
-      return;
-    }
-
-    // Extract user information
-    const { sub: googleId, name, email, picture } = payload;
+    const { googleId, name, email, picture } = req.body;
 
     if (!googleId || !email || !name) {
       res.status(400).json({ error: "Google account is missing essential details." });
       return;
     }
 
-    // ✅ Find or create the user
+    // 🔹 Find or create user
     let user: IUser | null = await User.findOne({ googleId });
 
     if (!user) {
