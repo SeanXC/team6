@@ -1,13 +1,14 @@
 import { User } from '@/types/user';
 import InterestsList from './InterestsList';
 import { useRef, useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router';
 
-interface InfoTabProps {
-    user: User;
-}
-
-function InfoTab({user}: InfoTabProps) {
-	const [interestsList, setInterestsList] = useState(['programming', 'web development', 'item 3', 'programming', 'web development', 'item 3', 'programming', 'web development', 'item 3']);
+function InfoTab() {
+	const navigate = useNavigate();
+	const storedUser = localStorage.getItem("user");
+	const user: User = storedUser ? JSON.parse(storedUser) : null;
+	const [interestsList, setInterestsList] = useState<string[]>(user.interests ?? []);
 
 	const inputRef = useRef<HTMLInputElement>(null);
 
@@ -18,9 +19,32 @@ function InfoTab({user}: InfoTabProps) {
 		listClone.splice(indexToRemove, 1);
 
 		setInterestsList(listClone);
+
+		sendUpdatedInterestsList(listClone);
 	}
 
-	function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+	async function sendUpdatedInterestsList(list: string[]) {
+		try {
+			const age = user.age;
+			const res = await axios.put("https://team6-production.up.railway.app/user/update-profile", { age, interests: list },
+				{
+					headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }, // ✅ Send auth token in headers
+				}
+			);
+	
+			console.log("✅ Profile Updated:", res.data);
+		
+			// ✅ Update user in localStorage
+			localStorage.setItem("user", JSON.stringify(res.data.user));
+		
+			// ✅ Redirect to Dashboard
+			navigate("/dashboard");
+		} catch (error) {
+			console.error("❌ Profile Update Error:", error);
+		}
+	}
+
+	async function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
 		const text = inputRef.current?.value.trim();
 		
 		if (!text || !inputRef.current) {
@@ -34,6 +58,8 @@ function InfoTab({user}: InfoTabProps) {
 			listClone.push(text);
 
 			setInterestsList(listClone);
+  
+			sendUpdatedInterestsList(listClone);
 
 			inputRef.current.value = '';
 		}

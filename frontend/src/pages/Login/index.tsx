@@ -32,6 +32,7 @@ function Login(): React.ReactElement {
 
         // ✅ Store token & user details in localStorage
         localStorage.setItem("token", res.data.token);
+        localStorage.setItem('userPfp', userInfo.data.picture);
         localStorage.setItem("user", JSON.stringify(res.data.user));
 
         // ✅ Redirect based on profile completion status
