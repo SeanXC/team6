@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { IoMdArrowBack } from 'react-icons/io';
 import ExplanationText from './ExplanationText';
-import AudioPlayer from './AudioPlayer';
+import AudioPlayer from './AudioTutorGenerator';
 
 function SummaryPage() {
 	// const params = useParams();
