@@ -9,6 +9,9 @@ import userRoutes from "./routes/user.routes";
 import documentRoutes from "./routes/document.routes";
 import cors from "cors";
 
+import fs from "fs";
+import path from "path";
+
 
 // ✅ Load environment variables
 dotenv.config();
@@ -62,7 +65,12 @@ app.get(
     res.redirect("/dashboard"); // Change this for frontend integration
   }
 );
-
+// ✅ Ensure the `uploads/` directory exists on startup
+const uploadDir = path.join(__dirname, "../uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("📂 Created 'uploads' directory.");
+}
 // ✅ Start Server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
