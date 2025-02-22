@@ -16,7 +16,7 @@ function UploadsList({uploads}: UploadsListProps) {
 	}
 
 	const userUploadsRendered = uploads.map((item) => {
-		return <li className='hover:bg-gray-500 border-b-2 border-white'>
+		return <li className='hover:bg-gray-500 border-b-[1px] border-white'>
 			<Link to={{
 				pathname: '/summary/' + item.id,
 			}}
