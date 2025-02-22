@@ -14,6 +14,7 @@ import { authenticate } from "../middleware/auth.middleware"; // Import authenti
 const router = express.Router();
 
 // ✅ Upload and extract text from a document
+// router.post("/upload", authenticate, upload.single("file"), uploadDocument);
 router.post("/upload", authenticate, upload.single("file"), uploadDocument);
 
 // ✅ Retrieve all documents for a user
