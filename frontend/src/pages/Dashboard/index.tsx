@@ -1,39 +1,37 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // ✅ Fix import
+import { Link, useNavigate } from 'react-router-dom';
 import UploadsList from './UploadsList';
 import UserFooter from './UserFooter';
 import InfoTab from './InfoTab';
 import axios from 'axios';
+import SummaryDisplay from '../Summary/SummaryDisplay';
 
 function Dashboard() {
 	const navigate = useNavigate();
-
-	// ✅ Get authenticated user from localStorage
 	const [user, setUser] = useState<{ name: string; pfpUrl: string } | null>(null);
 	const [userUploads, setUserUploads] = useState([]);
+	const [summarizedDocs, setSummarizedDocs] = useState([]); // ✅ State for summaries
 
 	useEffect(() => {
-		// ✅ Check if user is authenticated
 		const storedUser = localStorage.getItem("user");
 		const token = localStorage.getItem("token");
 
 		if (!storedUser || !token) {
-			navigate("/login"); // ⛔ Redirect to login if user is not authenticated
+			navigate("/login");
 			return;
 		}
 
-		// ✅ Parse user from localStorage
 		const parsedUser = JSON.parse(storedUser);
 		setUser({
 			name: parsedUser.name,
-			pfpUrl: localStorage.getItem('userPfp') || '', // Placeholder profile picture
+			pfpUrl: "https://picsum.photos/128",
 		});
 
-		// ✅ Fetch user uploads from backend
+		// ✅ Fetch user uploads
 		const fetchUploads = async () => {
 			try {
-				const response = await axios.get(`https://team6-production.up.railway.app/documents/all`, {
-					headers: { Authorization: `Bearer ${token}` }, // ✅ Send token for authentication
+				const response = await axios.get(`https://team6-production.up.railway.app/user/uploads`, {
+					headers: { Authorization: `Bearer ${token}` },
 				});
 				setUserUploads(response.data.uploads);
 			} catch (error) {
@@ -41,7 +39,20 @@ function Dashboard() {
 			}
 		};
 
+		// ✅ Fetch summarized documents
+		const fetchSummarizedDocs = async () => {
+			try {
+				const response = await axios.get(`https://team6-production.up.railway.app/document/summarized`, {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				setSummarizedDocs(response.data.documents);
+			} catch (error) {
+				console.error("Error fetching summaries:", error);
+			}
+		};
+
 		fetchUploads();
+		fetchSummarizedDocs();
 	}, [navigate]);
 
 	if (!user) return <p>Loading...</p>;
@@ -63,6 +74,7 @@ function Dashboard() {
 			</div>
 			<div className='flex flex-col w-8/12 gap-4 p-4 pl-0 box-border'>
 				<InfoTab user={user} />
+				<SummaryDisplay summarizedDocs={summarizedDocs} /> {/* ✅ Show summaries */}
 				<UserFooter user={user} />
 			</div>
 		</div>

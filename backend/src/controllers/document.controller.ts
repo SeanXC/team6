@@ -11,7 +11,6 @@ interface AuthenticatedRequest extends Request {
 }
 
 // ✅ Upload & Process Document (Authenticated Users Only)
-// ✅ Upload & Process Document (Authenticated Users Only)
 export const uploadDocument:any = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (!req.user || !req.user.userId) {
@@ -24,25 +23,48 @@ export const uploadDocument:any = async (req: AuthenticatedRequest, res: Respons
       return;
     }
 
-    console.log("📂 Processing File from Memory...");
+    console.log("📂 File Uploaded:", req.file.originalname);
 
-    // ✅ Extract text from PDF using file buffer
-    const data = await pdfParse(req.file.buffer);
-    const extractedText = data.text.trim();
+    // ✅ Extract text from PDF
+    const pdfData = await pdfParse(req.file.buffer);
+    const extractedText = pdfData.text.trim();
 
-    console.log("📄 Extracted Text:", extractedText);
+    console.log("📄 Extracted Text:", extractedText.slice(0, 500)); // Log preview
 
-    // ✅ Save document details in MongoDB
+    // ✅ Save document to MongoDB
     const newDocument = new Document({
       userId: req.user.userId,
       filename: req.file.originalname,
-      text: extractedText, // ✅ Store extracted text
+      text: extractedText,
     });
 
     await newDocument.save();
+    console.log("✅ Document saved:", newDocument._id);
 
+    // ✅ Fetch user details (age & interests)
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      res.status(404).json({ error: "User not found!" });
+      return;
+    }
+
+    const userAge = user.age || 18;
+    const userInterests = user.interests?.length > 0 ? user.interests.join(", ") : "various topics";
+
+    console.log("🧑 User Details:", { age: userAge, interests: userInterests });
+
+    // ✅ Generate AI Summary
+    const summary = await summarizeText(extractedText, userAge, userInterests);
+
+    // ✅ Update document with summary
+    newDocument.summary = summary;
+    await newDocument.save();
+
+    console.log("✅ Summary saved:", newDocument._id);
+
+    // ✅ Send response with document & summary
     res.json({
-      message: "Document processed and saved successfully!",
+      message: "Document uploaded, processed, and summarized successfully!",
       document: newDocument,
     });
   } catch (error) {
