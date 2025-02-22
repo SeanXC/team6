@@ -1,11 +1,11 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
-import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import tailwindcss from '@tailwindcss/vite';
 
 // https://vite.dev/config/
 export default defineConfig({
-  resolve: {
+	resolve: {
 		alias: {
 			'@': path.resolve(__dirname, './src'),
 			'@assets': path.resolve(__dirname, './src/assets'),
@@ -14,5 +14,5 @@ export default defineConfig({
 			'@types': path.resolve(__dirname, './src/types'),
 		},
 	},
-  plugins: [react(), tailwindcss()],
-})
+	plugins: [react(), tailwindcss()],
+});
