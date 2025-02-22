@@ -1,5 +1,12 @@
 import express from "express";
-import { uploadDocument, getDocuments, summarizeDocument } from "../controllers/document.controller";
+import { uploadDocument, 
+    getDocuments,
+    summarizeDocument,
+    getChatHistory,
+    chatWithDocument,
+    getSingleSummarizedDocument,
+    getSummarizedDocuments
+} from "../controllers/document.controller";
 import upload from "../middleware/upload.middleware";
 import { authenticate } from "../middleware/auth.middleware"; // Import authentication middleware
 
@@ -13,5 +20,18 @@ router.get("/all",authenticate, getDocuments);
 
 // ✅ Summarize a specific document
 router.get("/summarize/:documentId", authenticate, summarizeDocument);
+
+// ✅ Retrieve only documents that have summaries
+router.get("/summarized", authenticate, getSummarizedDocuments);
+
+// ✅ Retrieve a single summarized document
+router.get("/summarized/:documentId", authenticate, getSingleSummarizedDocument);
+
+
+// ✅ Ask questions about a document
+router.post("/chat/:documentId", authenticate, chatWithDocument);
+
+// ✅ Retrieve chat history for a document
+router.get("/chat/history/:documentId", authenticate, getChatHistory);
 
 export default router;
