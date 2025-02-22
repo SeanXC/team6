@@ -7,14 +7,25 @@ function Login(): React.ReactElement {
   const navigate = useNavigate();
 
   const googleLogin = useGoogleLogin({
-    flow: "implicit", // ✅ Ensures the response includes an ID token
     onSuccess: async (tokenResponse) => {
       try {
-        console.log("✅ Google Token Received:", tokenResponse);
+        console.log("✅ Google Access Token Received:", tokenResponse);
 
-        // ✅ Send the ID token to backend for authentication
+        // 🔹 Fetch user profile from Google API
+        const userInfo = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: {
+            Authorization: `Bearer ${tokenResponse.access_token}`,
+          },
+        });
+
+        console.log("✅ Google User Info:", userInfo.data);
+
+        // 🔹 Send the user info to backend for authentication
         const res = await axios.post("https://team6-production.up.railway.app/auth/google", {
-          token: tokenResponse.access_token, // ✅ Ensure backend verifies ID token, not access token
+          googleId: userInfo.data.sub,   // Google Unique User ID
+          name: userInfo.data.name,
+          email: userInfo.data.email,
+          picture: userInfo.data.picture,
         });
 
         console.log("✅ Backend Response:", res.data);
