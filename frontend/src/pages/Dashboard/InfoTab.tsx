@@ -1,6 +1,6 @@
 import { User } from '@/types/user';
 import InterestsList from './InterestsList';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 

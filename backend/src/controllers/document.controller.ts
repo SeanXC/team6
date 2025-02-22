@@ -4,6 +4,7 @@ import pdfParse from "pdf-parse";
 import Document from "../models/Document";
 import { askDocumentQuestion, convertTextToSpeech, generateFunExplanation, summarizeText } from "../services/ai.service";
 import User from "../models/User";
+import mongoose from "mongoose";
 
 // ✅ Ensure `req.user` follows the `authenticate` middleware format
 interface AuthenticatedRequest extends Request {
@@ -321,8 +322,8 @@ export const generateOrRetrieveAudioTutor:any = async (req: AuthenticatedRequest
     console.log("🎤 Checking audio tutorial for:", { age: userAge, interests: userInterests });
 
     // ✅ Ensure the document belongs to the authenticated user
-    const document = await Document.findOne({ _id: documentId, userId });
-
+    // const document = await Document.findOne({ _id: documentId, userId });
+    const document = await Document.findOne({ _id: new mongoose.Types.ObjectId(documentId), userId });
     if (!document) {
       res.status(404).json({ error: "Document not found or access denied." });
       return;
