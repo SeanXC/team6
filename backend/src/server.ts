@@ -7,6 +7,8 @@ import "./config/passport"; // Ensure Passport is configured before use
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import documentRoutes from "./routes/document.routes";
+import cors from "cors";
+
 
 // ✅ Load environment variables
 dotenv.config();
@@ -16,7 +18,13 @@ const app = express();
 
 // ✅ Connect to Database
 connectDB();
-
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://team6-production.up.railway.app/"], // Allow frontend domains
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // Allow cookies & authentication headers
+  })
+);
 // ✅ Middleware Configuration
 app.use(express.json());
 app.use(
