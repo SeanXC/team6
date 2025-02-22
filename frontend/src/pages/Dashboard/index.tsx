@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import UploadsList from './UploadsList';
 import UserFooter from './UserFooter';
+import InfoTab from './InfoTab';
 
 function Dashboard() {
 	const user = {
@@ -80,7 +81,7 @@ function Dashboard() {
 				</ul>
 			</div>
 			<div className='flex flex-col w-8/12 gap-4 p-4 pl-0 box-border'>
-				<div className='grow bg-gray-700 p-4 rounded-xl'></div>
+				<InfoTab user={user} />
 				<UserFooter user={user} />
 			</div>
 		</div>
