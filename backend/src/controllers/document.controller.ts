@@ -12,7 +12,6 @@ interface AuthenticatedRequest extends Request {
 }
 
 // ✅ Upload & Process Document (Authenticated Users Only)
-
 export const uploadDocument:any = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (!req.user || !req.user.userId) {
@@ -25,6 +24,8 @@ export const uploadDocument:any = async (req: AuthenticatedRequest, res: Respons
       return;
     }
 
+    console.log("📂 File Uploaded:", req.file.originalname);
+
     // ✅ Ensure `uploads/` directory exists
     const uploadDir = path.join(__dirname, "../../uploads");
     if (!fs.existsSync(uploadDir)) {
@@ -32,12 +33,12 @@ export const uploadDocument:any = async (req: AuthenticatedRequest, res: Respons
       console.log("📂 Created 'uploads' directory.");
     }
 
-    // ✅ Define the file path
+    // ✅ Define file path
     const filePath = path.join(uploadDir, req.file.originalname);
 
-    // ✅ Write file to the server
+    // ✅ Save file to disk (from memory)
     fs.writeFileSync(filePath, req.file.buffer);
-    console.log("📂 File saved:", filePath);
+    console.log("📂 File saved successfully:", filePath);
 
     // ✅ Extract text from PDF
     const data = await pdfParse(req.file.buffer);
@@ -45,9 +46,9 @@ export const uploadDocument:any = async (req: AuthenticatedRequest, res: Respons
 
     console.log("📄 Extracted Text:", extractedText);
 
-    // ✅ Save document to MongoDB, linking it to the authenticated user
+    // ✅ Save document to MongoDB
     const newDocument = new Document({
-      userId: req.user.userId, // ✅ Associate the document with the authenticated user
+      userId: req.user.userId,
       filename: req.file.originalname,
       text: extractedText,
     });
@@ -59,11 +60,13 @@ export const uploadDocument:any = async (req: AuthenticatedRequest, res: Respons
       message: "Document processed and saved successfully!",
       document: newDocument,
     });
+
   } catch (error) {
     console.error("❌ Error processing document:", error);
     res.status(500).json({ error: "Failed to process document!" });
   }
 };
+
 // ✅ Fetch Only Documents Uploaded by the Authenticated User
 export const getDocuments:any = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
