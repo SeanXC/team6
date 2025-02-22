@@ -1,80 +1,60 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom'; // ✅ Fix import
 import UploadsList from './UploadsList';
 import UserFooter from './UserFooter';
 import InfoTab from './InfoTab';
+import axios from 'axios';
 
 function Dashboard() {
-	const user = {
-		name: 'John Doe',
-		pfpUrl: 'https://picsum.photos/128'
-	};
+	const navigate = useNavigate();
 
-	const [userUploads,] = useState([
-		{
-			summaryName: 'test 1',
-			date: 1740230723882,
-			id: 1,
-		},
-		{
-			summaryName: 'test 2',
-			date: 1740230700165,
-			id: 2,
-		},
-		{
-			summaryName: 'test 1',
-			date: 1740230723882,
-			id: 1,
-		},
-		{
-			summaryName: 'test 2',
-			date: 1740230700165,
-			id: 2,
-		},
-		{
-			summaryName: 'test 1',
-			date: 1740230723882,
-			id: 1,
-		},
-		{
-			summaryName: 'test 2',
-			date: 1740230700165,
-			id: 2,
-		},{
-			summaryName: 'test 1',
-			date: 1740230723882,
-			id: 1,
-		},
-		{
-			summaryName: 'test 2',
-			date: 1740230700165,
-			id: 2,
-		},{
-			summaryName: 'test 1',
-			date: 1740230723882,
-			id: 1,
-		},
-		{
-			summaryName: 'test 2',
-			date: 1740230700165,
-			id: 2,
-		}
-	]);
+	// ✅ Get authenticated user from localStorage
+	const [user, setUser] = useState<{ name: string; pfpUrl: string } | null>(null);
+	const [userUploads, setUserUploads] = useState([]);
 
 	useEffect(() => {
-		// fetch from backend
-		// setUserUploads()
-	}, []);
+		// ✅ Check if user is authenticated
+		const storedUser = localStorage.getItem("user");
+		const token = localStorage.getItem("token");
+
+		if (!storedUser || !token) {
+			navigate("/login"); // ⛔ Redirect to login if user is not authenticated
+			return;
+		}
+
+		// ✅ Parse user from localStorage
+		const parsedUser = JSON.parse(storedUser);
+		setUser({
+			name: parsedUser.name,
+			pfpUrl: localStorage.getItem('userPfp') || '', // Placeholder profile picture
+		});
+
+		// ✅ Fetch user uploads from backend
+		const fetchUploads = async () => {
+			try {
+				const response = await axios.get(`https://team6-production.up.railway.app/user/uploads`, {
+					headers: { Authorization: `Bearer ${token}` }, // ✅ Send token for authentication
+				});
+				setUserUploads(response.data.uploads);
+			} catch (error) {
+				console.error("Error fetching uploads:", error);
+			}
+		};
+
+		fetchUploads();
+	}, [navigate]);
+
+	if (!user) return <p>Loading...</p>;
 
 	return (
 		<div className="flex flex-row gap-4 box-border h-full">
 			<div className="flex flex-col w-4/12 box-border p-4 pr-0 gap-4">
 				<Link 
 					className='bg-gradient-to-br from-blue-700 to-purple-700 hover:from-blue-800 hover:to-purple-800 p-4 rounded-xl text-center font-semibold'
-					to={{
-						pathname: '/upload',
-					}}
-				>Upload a PDF</Link>
+					to="/upload"
+				>
+					Upload a PDF
+				</Link>
 
 				<ul className='grow bg-gray-700 rounded-xl overflow-auto'>
 					<UploadsList uploads={userUploads} />
