@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router';
 import { IoMdArrowBack } from 'react-icons/io';
 import ExplanationText from './ExplanationText';
+import AudioPlayer from './AudioPlayer';
 
 function SummaryPage() {
 	const params = useParams();
@@ -31,6 +32,7 @@ Rhoncus ultrices sagittis conubia commodo urna neque. Donec scelerisque augue fa
 				<IoMdArrowBack className="w-8 h-8" />
 				<span className="text-xl">&nbsp; Back</span>
 			</Link>
+			<AudioPlayer filepath='https://download.samplelib.com/mp3/sample-6s.mp3' />
 			<div className="grow">
 				<h1 className="text-3xl pb-4 !font-semibold">Quantum Physics Explained</h1>
 				<ExplanationText text={demoText} />
