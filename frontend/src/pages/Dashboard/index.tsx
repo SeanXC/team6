@@ -32,7 +32,7 @@ function Dashboard() {
 		// ✅ Fetch user uploads from backend
 		const fetchUploads = async () => {
 			try {
-				const response = await axios.get(`https://team6-production.up.railway.app/user/uploads`, {
+				const response = await axios.get(`https://team6-production.up.railway.app/documents/all`, {
 					headers: { Authorization: `Bearer ${token}` }, // ✅ Send token for authentication
 				});
 				setUserUploads(response.data.uploads);
