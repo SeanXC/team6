@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import UploadsList from './UploadsList';
 import UserFooter from './UserFooter';
 import InfoTab from './InfoTab';
 import axios from 'axios';
-import SummaryDisplay from '../Summary/SummaryDisplay';
 import { User } from '@/types/user';
 import Upload from '@pages/Upload';
 import AudioPlayer from '../Summary/AudioTutorGenerator';
@@ -12,50 +11,38 @@ import AudioPlayer from '../Summary/AudioTutorGenerator';
 function Dashboard() {
 	const navigate = useNavigate();
 	const [user, setUser] = useState<{ name: string; pfpUrl: string } | null>(null);
-	const [userUploads, setUserUploads] = useState([]);
 	const [summarizedDocs, setSummarizedDocs] = useState([]); // ✅ State for summaries
 	const [uploadShow, setUploadShow] = useState<boolean>(false);
 
 	useEffect(() => {
-		const storedUser = localStorage.getItem("user");
-		const token = localStorage.getItem("token");
+		const storedUser = localStorage.getItem('user');
+		const token = localStorage.getItem('token');
 
 		if (!storedUser || !token) {
-			navigate("/login");
+			navigate('/login');
 			return;
 		}
 
 		const parsedUser: User = JSON.parse(storedUser);
 		setUser({
 			name: parsedUser.name,
-			pfpUrl: localStorage.getItem('userPfp') || ""
+			pfpUrl: localStorage.getItem('userPfp') || ''
 		});
 
-		// ✅ Fetch user uploads
-		const fetchUploads = async () => {
-			try {
-				const response = await axios.get(`https://team6-production.up.railway.app/user/uploads`, {
-					headers: { Authorization: `Bearer ${token}` },
-				});
-				setUserUploads(response.data.uploads);
-			} catch (error) {
-				console.error("Error fetching uploads:", error);
-			}
-		};
 
 		// ✅ Fetch summarized documents
 		const fetchSummarizedDocs = async () => {
 			try {
-				const response = await axios.get(`https://team6-production.up.railway.app/document/summarized`, {
+				const response = await axios.get('https://team6-production.up.railway.app/document/summarized', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
+
 				setSummarizedDocs(response.data.documents);
 			} catch (error) {
-				console.error("Error fetching summaries:", error);
+				console.error('Error fetching summaries:', error);
 			}
 		};
 
-		fetchUploads();
 		fetchSummarizedDocs();
 	}, [navigate]);
 
