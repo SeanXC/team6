@@ -66,7 +66,7 @@ function Dashboard() {
 				</button>
 
 				<ul className='grow bg-gray-700 rounded-xl overflow-auto'>
-					<UploadsList uploads={summarizedDocs} />
+					<UploadsList uploads={summarizedDocs} loadingUploadsList={loading} />
 				</ul>
 
 				<UserFooter user={user} />

@@ -16,17 +16,17 @@ interface UploadListProps {
 		createdAt: string;
 		updatedAt: string;
 	}[];
+	loadingUploadsList: boolean;
 }
 
-const UploadsList = ({uploads}: UploadListProps) => {
+const UploadsList = ({uploads, loadingUploadsList}: UploadListProps) => {
 	const [renderedList, setRenderedList] = useState<JSX.Element[] | null>(null);
-	const [loaded, setLoaded] =  useState(false);
+	const [loading, setLoading] =  useState<boolean>(false);
 
 	useEffect(() => {
 		setRenderedList(uploads.map((item) => {
 			const createdDateObject = new Date(item.createdAt);
 			const dateTimeString = `${createdDateObject.getHours()}:${createdDateObject.getMinutes()}, ${new Date(item.createdAt).toLocaleDateString()}`;
-			setLoaded(true);
 
 			return <Link
 				to={{
@@ -44,8 +44,12 @@ const UploadsList = ({uploads}: UploadListProps) => {
 			</Link>;
 		}));
 
-		setLoaded(true);
 	}, [uploads]);
+
+	useEffect(() => {
+		setLoading(loadingUploadsList)
+	}, [loadingUploadsList])
+	
 
 	async function handleDeleteButtonPress(e: React.MouseEvent, filename: string, id: string) {
 		e.preventDefault();
@@ -73,7 +77,7 @@ const UploadsList = ({uploads}: UploadListProps) => {
 	return (
 		<div className="flex flex-col items-center">
 			<span className='self-start text-xl px-3 py-2 border-b-[1px] border-white w-full font-semibold'>Full Explanations</span>
-			{!loaded ? (
+			{ loading ? (
 				<UploadListItemsSkeleton />
 			) : renderedList && renderedList.length > 0 ? (
 				renderedList
