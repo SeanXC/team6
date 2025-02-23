@@ -4,7 +4,6 @@ import UploadsList from './UploadsList';
 import UserFooter from './UserFooter';
 import InfoTab from './InfoTab';
 import axios from 'axios';
-import SummaryDisplay from '../Summary/SummaryDisplay';
 import AudioPlayer from '../Summary/AudioTutorGenerator';
 
 function Dashboard() {

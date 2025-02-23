@@ -66,17 +66,17 @@ function InfoTab() {
 		sendUpdatedInterestsList(listClone);
 
 		setInput('');
-	}
+	};
 
 	return (
-		<div className="grow flex flex-col bg-gray-700 p-4 rounded-xl">
+		<div className="flex flex-col bg-gray-700 p-4 rounded-xl">
 			<span className='text-3xl !font-semibold pb-4'>Hello, {user.name}</span>
 			<span className='text-xl'>Any new interests?</span>
 			<div className='relative'>
 				<input onKeyDown={handleInputKeyDown} value={input} onChange={e => setInput(e.target.value)} type="text" className='w-full bg-gray-800 p-2 rounded-xl mt-2' placeholder='If so, enter them here...' />
 				<button className='absolute right-0 bottom-0 py-2 px-2 cursor-pointer' onClick={addInterest}><IoMdArrowRoundForward className='h-full w-6 hover:text-gray-400' /></button>
 			</div>
-				<InterestsList list={interestsList} onRemoveItem={removeItemFromList} />
+			<InterestsList list={interestsList} onRemoveItem={removeItemFromList} />
 		</div>
 	);
 }
