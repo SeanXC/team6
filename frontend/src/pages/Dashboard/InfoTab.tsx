@@ -1,15 +1,17 @@
 import { User } from '@/types/user';
 import InterestsList from './InterestsList';
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { IoMdArrowRoundForward } from 'react-icons/io';
+import sendAuthedAxios from '@/utils/sendAuthedAxios';
+import useAuthenticated from '@/hooks/useAuthenticated';
 
 function InfoTab() {
 	const navigate = useNavigate();
 	const storedUser = localStorage.getItem('user');
 	const user: User = storedUser ? JSON.parse(storedUser) : null;
 	const [interestsList, setInterestsList] = useState<string[]>(user.interests ?? []);
+	const token = useAuthenticated({navToLoginOnUnauthed: false});
 
 	const [input, setInput] = useState<string>('');
 
@@ -27,11 +29,11 @@ function InfoTab() {
 	async function sendUpdatedInterestsList(list: string[]) {
 		try {
 			const age = user.age;
-			const res = await axios.put('https://team6-production.up.railway.app/user/update-profile', { age, interests: list },
-				{
-					headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }, // ✅ Send auth token in headers
-				}
-			);
+
+			const res = await sendAuthedAxios('/user/update-profile', {
+				data: { age, interests: list },
+				method: 'PUT'
+			}, token);
 	
 			console.log('✅ Profile Updated:', res.data);
 		

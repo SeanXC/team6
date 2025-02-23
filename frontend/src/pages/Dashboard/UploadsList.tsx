@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import UploadListItemsSkeleton from './UploadListItemSkeleon';
 import { IoDocumentTextOutline } from 'react-icons/io5';
 import { IoMdClose } from 'react-icons/io';
-import axios from 'axios';
+import sendAuthedAxios from '@/utils/sendAuthedAxios';
 
 interface UploadListProps {
 	uploads: {
@@ -60,11 +60,9 @@ const UploadsList = ({uploads}: UploadListProps) => {
 		const confirmDelete = confirm(`Are you sure you want to delete '${filename}'?`);
 		
 		if (confirmDelete) {
-			await axios.delete(`https://team6-production.up.railway.app/document/delete/${id}`, {
-				headers: {
-					'Authorization': `Bearer ${token}`
-				}
-			});
+			await sendAuthedAxios(`/document/delete/${id}`, {
+				method: 'DELETE'
+			}, token);
 			
 			location.reload();
 		}

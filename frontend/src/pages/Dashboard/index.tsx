@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import UploadsList from './UploadsList';
 import UserFooter from './UserFooter';
 import InfoTab from './InfoTab';
-import axios from 'axios';
 import { User, UserInfoShort } from '@/types/user';
 import Upload from '@pages/Upload';
 import AudioPlayer from '../Summary/AudioTutorGenerator';
 import SumerizedDocsSkeleton from './SummarizedDocsSkeleon';
+import sendAuthedAxios from '@/utils/sendAuthedAxios';
 
 function Dashboard() {
 	const navigate = useNavigate();
@@ -37,14 +37,14 @@ function Dashboard() {
 			try {
 				setLoading(true);
 
-				const response = await axios.get('https://team6-production.up.railway.app/document/summarized', {
-					headers: { Authorization: `Bearer ${token}` },
-				});
+				const response = await sendAuthedAxios('/document/summarized', {
+					method: 'GET',
+				}, token);
 				setSummarizedDocs(response.data.documents);
 			} catch (error) {
 				console.error('Error fetching summaries:', error);
 			} finally {
-				setLoading(false)
+				setLoading(false);
 			}
 		};
 

@@ -4,6 +4,7 @@ import ExplanationText from './ExplanationText';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ExplanationTextSkeleton from './ExplanationTextSkeleton';
+import sendAuthedAxios from '@/utils/sendAuthedAxios';
 
 export default function SummaryPage() {
 	const params = useParams();
@@ -22,12 +23,11 @@ export default function SummaryPage() {
 				navigate('/login');
 			}
 
-			const response = await axios.get(
-				`https://team6-production.up.railway.app/document/explanation/${id}`,
+			const response = await sendAuthedAxios(`/document/explanation/${id}`,
 				{
-					headers: { Authorization: `Bearer ${token}` },
-				}
-			);
+					method: 'GET'
+				}, 
+				token );
 
 			setSummaryText(response.data.explanation);
 			setTitle(response.data.title);

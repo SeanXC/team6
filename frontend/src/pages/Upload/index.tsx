@@ -1,5 +1,6 @@
 import Spinner from '@/components/Spinner';
-import axios from 'axios';
+import useAuthenticated from '@/hooks/useAuthenticated';
+import sendAuthedAxios from '@/utils/sendAuthedAxios';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 type Props = {
@@ -13,8 +14,8 @@ function UploadPage(props: Props) {
 	const [file, setFile] = useState<File>();
 	const [errorMessage, setErrorMessage] = useState('');
 	const [fileSelected, setFileSelected] = useState(true);
-	const [loading, setLoading] = useState<boolean>(false)
-  	const token = localStorage.getItem("token");
+	const [loading, setLoading] = useState<boolean>(false);
+  	const token = useAuthenticated({navToLoginOnUnauthed: false});
 
 	useEffect(() => {
 		setFileSelected(file !== undefined);
@@ -38,39 +39,35 @@ function UploadPage(props: Props) {
 		if (!file) return;
 
 		const formData = new FormData();
-		formData.append("file", file);
+		formData.append('file', file);
 
 		try {
 			setLoading(true);
-			const res = await axios.post(
-				"https://team6-production.up.railway.app/document/upload",
-				formData,
-				{
-					headers: {
-						"Content-Type": "multipart/form-data",
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
 
-			const summaryRes = await axios.get(
-				"https://team6-production.up.railway.app/document/summarized",
-				{
-					headers: { Authorization: `Bearer ${token}` },
-				}
-			);
+			const res = await sendAuthedAxios('/document/upload', {
+				data: formData,
+				method: 'POST',
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				},
+			}, token);
+
+			const summaryRes = await sendAuthedAxios('/document/summarized', {
+				method: 'GET',
+			}, token);
+			
 			// Update summaries in Dashboard via the callback
 			setSummarizedDocs(summaryRes.data.documents);
 
 			closeModal();
-			console.log("res", res.data);
+			console.log('✅ Uploaded file response: ', res.data);
 		} catch (error) {
-			console.error("❌ Profile Update Error:", error);
+			console.error('❌ Profile Update Error:', error);
 		}
 	}
 
 	return (
-		<div className="flex flex-col justify-center items-center w-full h-full absolute z-10 bg-black/50 fixed" onClick={closeModal}>
+		<div className="flex flex-col justify-center items-center w-full h-full absolute z-10 bg-black/50" onClick={closeModal}>
 			<div className="w-80 h-60 bg-gray-700 rounded-xl flex flex-col items-center box-border p-4" onClick={(e) => e.stopPropagation()}>
 				<div className='flex flex-row gap-4'>
 					<label htmlFor="file-upload" 
