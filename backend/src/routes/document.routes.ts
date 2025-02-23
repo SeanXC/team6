@@ -7,7 +7,8 @@ import { uploadDocument,
     getSingleSummarizedDocument,
     getSummarizedDocuments,
     generateOrRetrieveAudioTutor,
-    generateFunExplanationAPI
+    generateFunExplanationAPI,
+    deleteDocument
 } from "../controllers/document.controller";
 import upload from "../middleware/upload.middleware";
 import { authenticate } from "../middleware/auth.middleware"; // Import authentication middleware
@@ -41,5 +42,9 @@ router.get("/chat/history/:documentId", authenticate, getChatHistory);
 router.get("/audio-tutor/:documentId", authenticate, generateOrRetrieveAudioTutor);
 
 router.get("/explanation/:documentId", authenticate, generateFunExplanationAPI);
+
+// ✅ Delete a document by ID (Only if authenticated)
+router.delete("/delete/:documentId", authenticate, deleteDocument);
+
 
 export default router;
