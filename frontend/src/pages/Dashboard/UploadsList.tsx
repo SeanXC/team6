@@ -1,7 +1,9 @@
-import { JSX, useEffect, useState } from 'react';
+import React, { JSX, useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import UploadListItemsSkeleton from './UploadListItemSkeleon';
 import { IoDocumentTextOutline } from 'react-icons/io5';
+import { IoMdClose } from 'react-icons/io';
+import axios from 'axios';
 
 interface UploadListProps {
 	uploads: {
@@ -30,7 +32,7 @@ const UploadsList = ({uploads}: UploadListProps) => {
 				to={{
 					pathname: `/summary/${item._id}`
 				}}
-				className="flex flex-row w-full p-4 border-b-[1px] border-white last:border-0 hover:bg-gray-600 transition-colors duration-150">
+				className="group relative overflow-hidden flex flex-row w-full p-4 border-b-[1px] border-white last:border-0 hover:bg-gray-600 transition-colors duration-150">
 				<div className='!aspect-square h-full min-w-10 my-auto mr-2'>
 					<IoDocumentTextOutline className='h-full w-full' />
 				</div>
@@ -38,9 +40,33 @@ const UploadsList = ({uploads}: UploadListProps) => {
 					<span className='text-white !font-semibold'>{item.filename}</span>
 					<span className='text-gray-400'>{dateTimeString}</span>
 				</div>
+				<IoMdClose onClick={(e) => handleDeleteButtonPress(e, item.filename, item._id)} className="w-8 h-8 absolute right-[-2rem] top-1/2 transform translate-y-[-50%] group-hover:text-red-400 group-hover:right-[1rem] transition-all duration-150" />
 			</Link>;
 		}));
 	}, [uploads]);
+
+	async function handleDeleteButtonPress(e: React.MouseEvent, filename: string, id: string) {
+		e.preventDefault();
+		
+		const token = localStorage.getItem('token');
+
+		if (!token) {
+			console.error('No token found when trying to delete item');
+			return;
+		}
+
+		const confirmDelete = confirm(`Are you sure you want to delete '${filename}'?`);
+		
+		if (confirmDelete) {
+			await axios.delete(`https://team6-production.up.railway.app/document/delete/${id}`, {
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			});
+			
+			location.reload();
+		}
+	}
 
 	return (
 		<div className="flex flex-col items-center">
