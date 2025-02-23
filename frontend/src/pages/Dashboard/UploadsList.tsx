@@ -24,11 +24,12 @@ const UploadsList = ({uploads, loadingUploadsList}: UploadListProps) => {
 	const [loading, setLoading] =  useState<boolean>(false);
 
 	useEffect(() => {
-		setRenderedList(uploads.map((item) => {
+		setRenderedList(uploads.map((item, index) => {
 			const createdDateObject = new Date(item.createdAt);
 			const dateTimeString = `${createdDateObject.getHours()}:${createdDateObject.getMinutes()}, ${new Date(item.createdAt).toLocaleDateString()}`;
 
 			return <Link
+				key={index}
 				to={{
 					pathname: `/summary/${item._id}`
 				}}
@@ -47,7 +48,7 @@ const UploadsList = ({uploads, loadingUploadsList}: UploadListProps) => {
 	}, [uploads]);
 
 	useEffect(() => {
-		setLoading(loadingUploadsList)
+		setLoading(loadingUploadsList)	
 	}, [loadingUploadsList])
 	
 
