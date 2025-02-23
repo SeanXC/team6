@@ -25,7 +25,7 @@ const app = express();
 connectDB();
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://team6-production.up.railway.app/"], // Allow frontend domains
+    origin: ["http://localhost:5173", "https://team6-production.up.railway.app/", 'https://t6-convocraft.vercel.app'], // Allow frontend domains
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // Allow cookies & authentication headers
   })
