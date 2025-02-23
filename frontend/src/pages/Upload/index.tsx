@@ -85,7 +85,9 @@ function UploadPage(props: Props) {
 				<>
 					{ !loading ? (
 						fileSelected ? <span className='text-green-400'>Selected: {file?.name}</span> : null
-					) : <Spinner />
+					) : <div className="flex flex-1 justify-center items-center w-full">
+						<Spinner />
+					</div>
 					}
 				</>
 			</div>
