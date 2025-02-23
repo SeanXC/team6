@@ -1,4 +1,5 @@
 export interface UploadedDoc {
+	_id?: string; //appears in dashboard index?
 	userId: string; // Associate with the user who uploaded it
 	filename: string;
 	text: string;

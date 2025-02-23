@@ -1,9 +1,8 @@
-import { User } from '@/types/user';
 import { googleLogout } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 
 interface UserFooterProps {
-    user: User;
+    user: { name: string; pfpUrl: string };
 }
 
 function UserFooter({ user }: UserFooterProps) {
