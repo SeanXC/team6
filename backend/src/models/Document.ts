@@ -7,6 +7,8 @@ export interface IDocument extends Document {
   text: string;
   summary?: string;
   chatHistory: IChatEntry[];
+  audioData?: Buffer;
+  audioMimeType?: string;
   audioUrl?: string;
   createdAt: Date;
 }
@@ -26,6 +28,9 @@ const DocumentSchema: Schema = new mongoose.Schema(
     filename: { type: String, required: true },
     summary: { type: String, default: '' },
     text: { type: String, required: true },
+    audioData: { type: Buffer },
+    audioMimeType: { type: String },
+    audioUrl: { type: String },
     chatHistory: [
         {
           question: { type: String, required: true },
@@ -33,7 +38,6 @@ const DocumentSchema: Schema = new mongoose.Schema(
           timestamp: { type: Date, default: Date.now },
         },
       ],
-      audioUrl: { type: String, default: null },
   },
   
   { timestamps: true }
