@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import UploadsList from './UploadsList';
 import UserFooter from './UserFooter';
 import InfoTab from './InfoTab';
 import axios from 'axios';
-import SummaryDisplay from '../Summary/SummaryDisplay';
 import { User } from '@/types/user';
 import Upload from '@pages/Upload';
 import AudioPlayer from '../Summary/AudioTutorGenerator';
@@ -13,54 +12,41 @@ import SumerizedDocsSkeleton from './SummarizedDocsSkeleon';
 function Dashboard() {
 	const navigate = useNavigate();
 	const [user, setUser] = useState<{ name: string; pfpUrl: string } | null>(null);
-	const [userUploads, setUserUploads] = useState([]);
 	const [summarizedDocs, setSummarizedDocs] = useState([]); // ✅ State for summaries
 	const [uploadShow, setUploadShow] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false)
 
 	useEffect(() => {
-		const storedUser = localStorage.getItem("user");
-		const token = localStorage.getItem("token");
+		const storedUser = localStorage.getItem('user');
+		const token = localStorage.getItem('token');
 
 		if (!storedUser || !token) {
-			navigate("/login");
+			navigate('/login');
 			return;
 		}
 
 		const parsedUser: User = JSON.parse(storedUser);
 		setUser({
 			name: parsedUser.name,
-			pfpUrl: localStorage.getItem('userPfp') || ""
+			pfpUrl: localStorage.getItem('userPfp') || ''
 		});
 
-		// ✅ Fetch user uploads
-		const fetchUploads = async () => {
-			try {
-				const response = await axios.get(`https://team6-production.up.railway.app/user/uploads`, {
-					headers: { Authorization: `Bearer ${token}` },
-				});
-				setUserUploads(response.data.uploads);
-			} catch (error) {
-				console.error("Error fetching uploads:", error);
-			}
-		};
 
 		// ✅ Fetch summarized documents
 		const fetchSummarizedDocs = async () => {
 			try {
 				setLoading(true)
-				const response = await axios.get(`https://team6-production.up.railway.app/document/summarized`, {
+				const response = await axios.get('https://team6-production.up.railway.app/document/summarized', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 				setLoading(false)
 
 				setSummarizedDocs(response.data.documents);
 			} catch (error) {
-				console.error("Error fetching summaries:", error);
+				console.error('Error fetching summaries:', error);
 			}
 		};
 
-		fetchUploads();
 		fetchSummarizedDocs();
 	}, [navigate]);
 
@@ -99,14 +85,19 @@ function Dashboard() {
 						<p className="text-gray-300">No summaries available.</p>
 					) : (
 						<ul className="space-y-6">
-							{summarizedDocs.map((doc) => (
-								<li key={doc._id} className="bg-gray-800 p-4 rounded-lg shadow-md">
-									<h3 className="font-semibold text-blue-400">{doc.filename}</h3>
-									<p className="text-gray-200 my-4">{doc.summary}</p>
-									{/* ✅ Generate Audio for each Document */}
-									<AudioPlayer documentId={doc._id} />
-								</li>
-							))}
+							{summarizedDocs
+								.sort((a, b) => {
+									return new Date(b.createdAt).getTime() > new Date(a.createdAt).getTime();
+								})
+								.map((doc) => (
+									<li key={doc._id} className="bg-gray-800 p-4 rounded-lg shadow-md">
+										<h3 className="font-semibold text-blue-400">{doc.filename}</h3>
+										<p className="text-gray-200 my-4">{doc.summary}</p>
+
+										{/* ✅ Generate Audio for each Document */}
+										<AudioPlayer documentId={doc._id} />
+									</li>
+								))}
 						</ul>
 					)}
 				</div>

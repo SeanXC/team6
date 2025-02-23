@@ -5,4 +5,5 @@ export interface User {
     age: number | 0;
     interests: string[];
     token?: string;
+    pfpUrl: string;
 }
