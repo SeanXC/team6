@@ -5,7 +5,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-800 to-gray-700 overflow-y-auto">
       <header className="flex justify-between items-center p-6">
-        <h1 className="text-4xl font-bold text-white">Convocraft</h1>
+        <h1 className="text-4xl font-bold text-white flex flex-row"><img className='h-12 w-12 mr-4' src="/favicon.svg" alt="Convocraft logo" /> Convocraft</h1>
         <Link
           to="/login"
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
