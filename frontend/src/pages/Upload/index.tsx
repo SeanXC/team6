@@ -67,11 +67,11 @@ function UploadPage(props: Props) {
 	}
 
 	return (
-		<div className="flex flex-col justify-center items-center w-full h-full absolute z-10 bg-black/50" onClick={closeModal}>
+		<div className="flex flex-col justify-center items-center w-full h-full z-10 bg-black/50 fixed" onClick={closeModal}>
 			<div className="w-80 h-60 bg-gray-700 rounded-xl flex flex-col items-center box-border p-4" onClick={(e) => e.stopPropagation()}>
 				<div className='flex flex-row gap-4'>
 					<label htmlFor="file-upload" 
-						className="bg-cyan-800 p-4 rounded-xl cursor-pointer w-auto "
+						className="bg-blue-600 hover:bg-blue-700 p-4 rounded-xl cursor-pointer w-auto "
 					>Select PDF</label>
 					<input type="file" id="file-upload" className="hidden" accept=".pdf" onChange={handleFileChange} />
 					<button onClick={handleUploadClick} disabled={!fileSelected} className="bg-gradient-to-br from-indigo-500 to-purple-500 p-4 rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-default">Upload✨</button>
@@ -79,7 +79,7 @@ function UploadPage(props: Props) {
 				<span className='text-red-400'>{errorMessage}</span>
 				<>
 					{ !loading ? (
-						fileSelected ? <span className='text-green-400'>Selected: {file?.name}</span> : null
+						fileSelected ? <span className='text-green-400 my-4'>Selected: {file?.name}</span> : null
 					) : <div className="flex flex-1 justify-center items-center w-full">
 						<Spinner />
 					</div>

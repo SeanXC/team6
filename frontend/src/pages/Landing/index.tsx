@@ -16,7 +16,7 @@ export default function LandingPage() {
       <main className="flex flex-col md:flex-row items-center justify-between flex-grow p-8">
         <div className="md:w-1/2 text-center md:text-left">
           <h2 className="text-6xl text-white font-bold mb-4">
-            Learn on your own terms.
+            Transform the Way You Learn with Convocraft.
           </h2>
           <p className="text-xl text-gray-300 mb-8">
             Unlock your potential with flexible, self-paced learning.
@@ -27,9 +27,15 @@ export default function LandingPage() {
           >
             Get Started
           </Link>
+          <a 
+            href="https://www.youtube.com/"
+            target="_blank"
+            className="inline-block px-6 py-3 ml-4 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-400 transition-colors"
+          >
+            Youtube
+          </a>
         </div>
         <div className="md:w-1/2 mt-8 md:mt-0 flex ">
-          {/* Replace with your own image or illustration */}
           <FaUserGraduate className="w-1/2 h-1/2 m-auto"/>
         </div>
       </main>
