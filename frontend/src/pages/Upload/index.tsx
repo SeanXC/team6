@@ -85,9 +85,7 @@ function UploadPage(props: Props) {
 				<>
 					{ !loading ? (
 						fileSelected ? <span className='text-green-400'>Selected: {file?.name}</span> : null
-						) : <div className=''>
-							<Spinner />
-						</div>
+					) : <Spinner />
 					}
 				</>
 			</div>

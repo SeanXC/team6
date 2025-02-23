@@ -11,6 +11,8 @@ import cors from "cors";
 
 import fs from "fs";
 import path from "path";
+import { GridFSBucket } from "mongodb";
+import mongoose from "mongoose";
 
 
 // ✅ Load environment variables
@@ -41,7 +43,21 @@ app.use(
         },
     })
 );
-
+app.get("/audio/stream/:fileId", async (req, res) => {
+  try {
+    const fileId = new mongoose.Types.ObjectId(req.params.fileId);
+    const db = mongoose.connection.db;
+    if (!db) {
+      throw new Error("Database connection is not ready.");
+    }
+    const bucket = new GridFSBucket(db, { bucketName: "audio" });
+    res.set("Content-Type", "audio/mpeg");
+    bucket.openDownloadStream(fileId).pipe(res);
+  } catch (error) {
+    console.error("❌ Error streaming audio:", error);
+    res.status(404).json({ error: "Audio not found" });
+  }
+});
 // ✅ Initialize Passport (AFTER session middleware)
 app.use(passport.initialize());
 app.use(passport.session());

@@ -8,6 +8,7 @@ import SummaryDisplay from '../Summary/SummaryDisplay';
 import AudioPlayer from '../Summary/AudioPlayer';
 import { User } from '@/types/user';
 import Upload from '@pages/Upload';
+import AudioPlayer from '../Summary/AudioTutorGenerator';
 
 function Dashboard() {
 	const navigate = useNavigate();
@@ -64,7 +65,7 @@ function Dashboard() {
 	return (
 		<div className="flex flex-row gap-4 box-border h-full">
 			{/* LEFT SECTION: Uploads & Upload Button */}
-			<div className="flex flex-col w-4/12 box-border p-4 pr-0 gap-4">
+			<div className="flex flex-col w-4/12 box-border p-4 pr-0 gap-4 h-max">
 				<button
 					className='group relative bg-gradient-to-br cursor-pointer from-blue-700 to-purple-700 p-4 rounded-xl text-center font-semibold'
 					onClick={() => setUploadShow(true)}
@@ -74,8 +75,10 @@ function Dashboard() {
 				</button>
 
 				<ul className='grow bg-gray-700 rounded-xl overflow-auto'>
-					<UploadsList uploads={userUploads} />
+					<UploadsList uploads={summarizedDocs} />
 				</ul>
+
+				<UserFooter user={user} />
 			</div>
 
 			{/* RIGHT SECTION: Info, Summaries & Audio */}
@@ -102,8 +105,6 @@ function Dashboard() {
 						</ul>
 					)}
 				</div>
-
-				<UserFooter user={user} />
 			</div>
 			{ uploadShow && <Upload closeModal={() => setUploadShow(false)} setSummarizedDocs={(docs) => setSummarizedDocs(docs)}/> }
 		</div>
