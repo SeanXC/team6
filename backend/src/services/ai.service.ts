@@ -75,7 +75,7 @@ export const generateFunExplanation = async (text: string, age: number, interest
         },
         { role: "user", content: text },
       ],
-      max_tokens: 500, // Allow space for detailed yet concise explanations
+      max_tokens: 1000, // Allow space for detailed yet concise explanations
     });
 
     return completion.choices[0].message?.content || "Sorry, I couldn't generate an explanation.";
