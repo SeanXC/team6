@@ -14,7 +14,7 @@ function UserFooter({ user }: UserFooterProps) {
 		googleLogout(); // ✅ Logout from Google
 		localStorage.removeItem("token"); // ✅ Clear stored token
 		localStorage.removeItem("user");  // ✅ Clear stored user data
-		navigate("/login"); // ✅ Redirect to Login page
+		navigate("/"); // ✅ Redirect to Login page
 	};
 
 	return (
