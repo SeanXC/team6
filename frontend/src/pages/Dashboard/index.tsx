@@ -79,15 +79,19 @@ function Dashboard() {
 						<p className="text-gray-300">No summaries available.</p>
 					) : (
 						<ul className="space-y-6">
-							{summarizedDocs.map((doc) => (
-								<li key={doc._id} className="bg-gray-800 p-4 rounded-lg shadow-md">
-									<h3 className="font-semibold text-blue-400">{doc.filename}</h3>
-									<p className="text-gray-200 my-4">{doc.summary}</p>
+							{summarizedDocs
+								.sort((a, b) => {
+									return new Date(b.createdAt).getTime() > new Date(a.createdAt).getTime();
+								})
+								.map((doc) => (
+									<li key={doc._id} className="bg-gray-800 p-4 rounded-lg shadow-md">
+										<h3 className="font-semibold text-blue-400">{doc.filename}</h3>
+										<p className="text-gray-200 my-4">{doc.summary}</p>
 
-									{/* ✅ Generate Audio for each Document */}
-									<AudioPlayer documentId={doc._id} />
-								</li>
-							))}
+										{/* ✅ Generate Audio for each Document */}
+										<AudioPlayer documentId={doc._id} />
+									</li>
+								))}
 						</ul>
 					)}
 				</div>
