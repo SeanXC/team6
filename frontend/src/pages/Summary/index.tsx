@@ -2,7 +2,6 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { IoMdArrowBack } from 'react-icons/io';
 import ExplanationText from './ExplanationText';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import ExplanationTextSkeleton from './ExplanationTextSkeleton';
 import sendAuthedAxios from '@/utils/sendAuthedAxios';
 
