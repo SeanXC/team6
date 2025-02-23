@@ -5,7 +5,6 @@ import UserFooter from './UserFooter';
 import InfoTab from './InfoTab';
 import axios from 'axios';
 import SummaryDisplay from '../Summary/SummaryDisplay';
-import AudioPlayer from '../Summary/AudioPlayer';
 import { User } from '@/types/user';
 import Upload from '@pages/Upload';
 import AudioPlayer from '../Summary/AudioTutorGenerator';
