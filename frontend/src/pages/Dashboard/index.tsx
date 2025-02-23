@@ -7,12 +7,14 @@ import axios from 'axios';
 import { User } from '@/types/user';
 import Upload from '@pages/Upload';
 import AudioPlayer from '../Summary/AudioTutorGenerator';
+import SumerizedDocsSkeleton from './SummarizedDocsSkeleon';
 
 function Dashboard() {
 	const navigate = useNavigate();
 	const [user, setUser] = useState<{ name: string; pfpUrl: string } | null>(null);
 	const [summarizedDocs, setSummarizedDocs] = useState([]); // ✅ State for summaries
 	const [uploadShow, setUploadShow] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false)
 
 	useEffect(() => {
 		const storedUser = localStorage.getItem('user');
@@ -33,9 +35,11 @@ function Dashboard() {
 		// ✅ Fetch summarized documents
 		const fetchSummarizedDocs = async () => {
 			try {
+				setLoading(true)
 				const response = await axios.get('https://team6-production.up.railway.app/document/summarized', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
+				setLoading(false)
 
 				setSummarizedDocs(response.data.documents);
 			} catch (error) {
@@ -75,7 +79,9 @@ function Dashboard() {
 				<div className="bg-gray-700 p-4 rounded-xl">
 					<h2 className="text-xl font-semibold mb-4 text-white">Summarized Documents</h2>
 
-					{summarizedDocs.length === 0 ? (
+					{loading ? (
+						<SumerizedDocsSkeleton />
+					) : summarizedDocs.length === 0 ? (
 						<p className="text-gray-300">No summaries available.</p>
 					) : (
 						<ul className="space-y-6">
