@@ -24,6 +24,7 @@ const UploadsList = ({uploads, loadingUploadsList}: UploadListProps) => {
 	const [loading, setLoading] =  useState<boolean>(false);
 
 	useEffect(() => {
+		// Sets list of uploads
 		setRenderedList(uploads.map((item, index) => {
 			const createdDateObject = new Date(item.createdAt);
 			const dateTimeString = `${createdDateObject.getHours()}:${createdDateObject.getMinutes()}, ${new Date(item.createdAt).toLocaleDateString()}`;

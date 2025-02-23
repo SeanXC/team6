@@ -15,12 +15,17 @@ function UploadPage(props: Props) {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [fileSelected, setFileSelected] = useState(true);
 	const [loading, setLoading] = useState<boolean>(false);
-  	const token = useAuthenticated({navToLoginOnUnauthed: false});
+	const token = useAuthenticated({navToLoginOnUnauthed: false});
 
 	useEffect(() => {
 		setFileSelected(file !== undefined);
 	}, [file]);
 
+	/**
+	 * Handle file change
+	 * @param e 
+	 * @returns 
+	 */
 	function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
 		if (e.target.files) {
 			const type = e.target.files[0].type;
@@ -35,6 +40,10 @@ function UploadPage(props: Props) {
 		}
 	}
 
+	/**
+	 * Handle file upload
+	 * @returns 
+	 */
 	async function handleUploadClick() {
 		if (!file) return;
 
@@ -44,6 +53,7 @@ function UploadPage(props: Props) {
 		try {
 			setLoading(true);
 
+			// Save Document
 			const res = await sendAuthedAxios('/document/upload', {
 				data: formData,
 				method: 'POST',
@@ -52,6 +62,7 @@ function UploadPage(props: Props) {
 				},
 			}, token);
 
+			// Get summarized documents
 			const summaryRes = await sendAuthedAxios('/document/summarized', {
 				method: 'GET',
 			}, token);
@@ -59,6 +70,7 @@ function UploadPage(props: Props) {
 			// Update summaries in Dashboard via the callback
 			setSummarizedDocs(summaryRes.data.documents);
 
+			// close upload modal
 			closeModal();
 			console.log('✅ Uploaded file response: ', res.data);
 		} catch (error) {

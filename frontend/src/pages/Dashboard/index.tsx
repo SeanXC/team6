@@ -15,7 +15,7 @@ function Dashboard() {
 	const [summarizedDocs, setSummarizedDocs] = useState<any[]>([]); // ✅ State for summaries
 	const [uploadShow, setUploadShow] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-
+	
 	useEffect(() => {
 		const storedUser = localStorage.getItem('user');
 		const token = localStorage.getItem('token');

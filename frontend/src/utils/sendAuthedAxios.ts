@@ -11,6 +11,7 @@ export default function sendAuthedAxios(pathname: string, config: AxiosRequestCo
 
 	config.url = `${BASE_URL}${pathname}`;
 
+	// Set headers
 	config.headers = {
 		...configHeaders,
 		Authorization: `Bearer ${token}`

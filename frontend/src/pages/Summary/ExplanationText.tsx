@@ -7,6 +7,7 @@ interface ExplanationTextProps {
 function ExplanationText({text}: ExplanationTextProps) {
 	const paragraphs = text.split('\n\n');
 
+	// Markdown 
 	const paragraphsRendered = paragraphs.map((paragraph) => {
 		return <Markdown>{paragraph}</Markdown>;
 	});

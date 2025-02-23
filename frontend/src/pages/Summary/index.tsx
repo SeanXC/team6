@@ -14,6 +14,7 @@ export default function SummaryPage() {
 	const [title, setTitle] = useState('');
 	const [loading, setLoading] = useState<boolean>(true);
 
+	// Fetch Text
 	const handleLoadText = async () => {
 		try {
 			setLoading(true);

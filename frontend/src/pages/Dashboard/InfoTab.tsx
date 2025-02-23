@@ -15,6 +15,10 @@ function InfoTab() {
 
 	const [input, setInput] = useState<string>('');
 
+	/**
+	 * Remove Item From Interest List
+	 * @param item 
+	 */
 	function removeItemFromList(item: string) {
 		const indexToRemove = interestsList.indexOf(item);
 
@@ -26,6 +30,10 @@ function InfoTab() {
 		sendUpdatedInterestsList(listClone);
 	}
 
+	/**
+	 * Update Users interest 
+	 * @param list 
+	 */
 	async function sendUpdatedInterestsList(list: string[]) {
 		try {
 			const age = user.age;
@@ -47,6 +55,11 @@ function InfoTab() {
 		}
 	}
 
+	/**
+	 * Handle "Enter" input when adding interest
+	 * @param e 
+	 * @returns 
+	 */
 	async function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
 		if (!input) {
 			// do nothing if text box empty
@@ -58,6 +71,7 @@ function InfoTab() {
 		}
 	}
 
+	// Add Interest to State
 	const addInterest = () => {
 		const listClone = [...interestsList];
 

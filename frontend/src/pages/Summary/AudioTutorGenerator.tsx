@@ -14,6 +14,7 @@ const AudioTutorGenerator: React.FC<AudioTutorGeneratorProps> = ({ documentId })
 	const [error, setError] = useState<string | null>(null);
 	const token = useAuthenticated({navToLoginOnUnauthed: true});
 
+	// API call generate audio
 	const handleGenerateAudio = async () => {
 		setLoading(true);
 		setError(null);

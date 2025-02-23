@@ -33,6 +33,7 @@ const UpdateProfile: React.FC = () => {
 		setInterests(interests.filter((_, i) => i !== index));
 	};
 
+	// Handle update profile
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 	
