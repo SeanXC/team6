@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuthenticated from '@/hooks/useAuthenticated';
 import sendAuthedAxios from '@/utils/sendAuthedAxios';
 
 const UpdateProfile: React.FC = () => {
 	const navigate = useNavigate();
 	const storedUser = localStorage.getItem('user');
 	const user = storedUser ? JSON.parse(storedUser) : null;
-	const token = useAuthenticated({navToLoginOnUnauthed: true});
+	const token = localStorage.getItem('token');
 
 	// State for form inputs
 	const [age, setAge] = useState<number | ''>(user?.age || '');
