@@ -1,21 +1,22 @@
-# **Team6 Backend** 🚀  
-A **Node.js, TypeScript, and MongoDB** backend for ConvoCraft, a platform that allows users to **upload documents, extract key insights, and generate audio-based explanations**.
+# **ConvoCraft** 🚀  
+![Page Previews](https://github.com/user-attachments/assets/8ee3d0fe-91e3-4ece-80ff-0d441bf9b662)
+
+ConvoCraft is a platform that allows users to **upload documents, extract key insights**, and **generate audio-based explanations, personalised to the user's interests**.
 
 ---
 
 ## **📌 Features**
-✅ **Google OAuth Authentication** (via Passport.js)  
-✅ **JWT-Based Authentication & Protected Routes**  
-✅ **User Profile Management** (Age & Interests)  
-✅ **Secure API Routes with Middleware**  
-✅ **MongoDB Database Integration**  
+- ✅ **Google OAuth Authentication**
+- ✅ **User Profile Management** (Age & Interests)  
+- ✅ **Secure API Routes with Middleware**  
+- ✅ **MongoDB Database Integration**  
 
 ---
 
 ## **⚙️ Tech Stack**
-- **Backend**: Node.js, Express.js, TypeScript
-- **Database**: MongoDB (via Mongoose)
-- **Authentication**: Google OAuth 2.0, JWT
+- **🧩 Core**: Node.js, TypeScript
+- **🖥️ Frontend**: React, TailwindCSS, Vite.
+- **🛠️ Backend**: Express.js, MongoDB (via Mongoose), Google OAuth 2.0, JWT
 
 
 ---
