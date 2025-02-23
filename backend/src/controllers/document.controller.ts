@@ -299,7 +299,10 @@ export const getChatHistory:any = async (req: AuthenticatedRequest, res: Respons
 };
 
 // ✅ Generate or Retrieve Audio-Based Tutor for a Document
-export const generateOrRetrieveAudioTutor:any = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const generateOrRetrieveAudioTutor: any = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
   try {
     if (!req.user || !req.user.userId) {
       res.status(401).json({ error: "Unauthorized: No valid user found." });
@@ -309,7 +312,7 @@ export const generateOrRetrieveAudioTutor:any = async (req: AuthenticatedRequest
     const { documentId } = req.params;
     const userId = req.user.userId;
 
-    // ✅ Fetch user details (age & interests)
+    // Fetch user details (age & interests)
     const user = await User.findById(userId);
     if (!user) {
       res.status(404).json({ error: "User not found!" });
@@ -317,19 +320,22 @@ export const generateOrRetrieveAudioTutor:any = async (req: AuthenticatedRequest
     }
 
     const userAge = user.age || 18;
-    const userInterests = user.interests?.length > 0 ? user.interests.join(", ") : "science and technology";
+    const userInterests =
+      user.interests?.length > 0 ? user.interests.join(", ") : "science and technology";
 
     console.log("🎤 Checking audio tutorial for:", { age: userAge, interests: userInterests });
 
-    // ✅ Ensure the document belongs to the authenticated user
-    // const document = await Document.findOne({ _id: documentId, userId });
-    const document = await Document.findOne({ _id: new mongoose.Types.ObjectId(documentId), userId });
+    // Ensure the document belongs to the authenticated user
+    const document = await Document.findOne({
+      _id: new mongoose.Types.ObjectId(documentId),
+      userId,
+    });
     if (!document) {
       res.status(404).json({ error: "Document not found or access denied." });
       return;
     }
 
-    // ✅ If audio already exists, return the saved link
+    // If audio already exists, return the saved link
     if (document.audioUrl) {
       console.log("✅ Returning existing audio file:", document.audioUrl);
       res.json({
@@ -340,13 +346,13 @@ export const generateOrRetrieveAudioTutor:any = async (req: AuthenticatedRequest
       return;
     }
 
-    // ✅ Generate a fun, engaging explanation
+    // Generate a fun, engaging explanation
     const explanation = await generateFunExplanation(document.text, userAge, userInterests);
 
-    // ✅ Convert explanation into speech
+    // Convert explanation into speech (saved in GridFS)
     const audioUrl = await convertTextToSpeech(explanation, userId, documentId);
 
-    // ✅ Save the generated audio link in the document
+    // Save the generated audio URL in the document
     document.audioUrl = audioUrl;
     await document.save();
 

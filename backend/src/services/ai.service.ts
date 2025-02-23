@@ -2,6 +2,9 @@ import OpenAI from "openai";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from 'path';
+import { Readable } from "stream";
+import mongoose from "mongoose";
+import { GridFSBucket } from "mongodb";
 
 dotenv.config();
 
@@ -76,7 +79,11 @@ export const generateFunExplanation = async (text: string, age: number, interest
 };
 
 // ✅ Convert Text to Speech Using OpenAI TTS (Save per Document)
-export const convertTextToSpeech = async (text: string, userId: string, documentId: string): Promise<string> => {
+export const convertTextToSpeech = async (
+  text: string,
+  userId: string,
+  documentId: string
+): Promise<string> => {
   try {
     const response = await openai.audio.speech.create({
       model: "tts-1",
@@ -84,15 +91,41 @@ export const convertTextToSpeech = async (text: string, userId: string, document
       input: text,
     });
 
-    // ✅ Define unique audio file path per document
+    // Convert the response to a Buffer
+    const audioArrayBuffer = await response.arrayBuffer();
+    const audioBuffer = Buffer.from(audioArrayBuffer);
+
+    // Use GridFSBucket to store the audio in MongoDB
+    // const bucket = new GridFSBucket(mongoose.connection.db, { bucketName: "audio" });
+    const db = mongoose.connection.db;
+if (!db) {
+  throw new Error("Database connection is not established.");
+}
+const bucket = new GridFSBucket(db, { bucketName: "audio" });
     const audioFileName = `audio_tutor_${documentId}.mp3`;
-    const filePath = path.join(__dirname, "../../public/audio", audioFileName);
 
-    // ✅ Save audio file
-    const audioStream = await response.arrayBuffer();
-    fs.writeFileSync(filePath, Buffer.from(audioStream));
+    // Create an upload stream with some metadata
+    const uploadStream = bucket.openUploadStream(audioFileName, {
+      contentType: "audio/mpeg",
+      metadata: { userId, documentId },
+    });
 
-    return `/audio/${audioFileName}`; // ✅ Return URL for frontend playback
+    // Create a readable stream from the buffer
+    const readableStream = new Readable();
+    readableStream.push(audioBuffer);
+    readableStream.push(null);
+
+    // Pipe the audio buffer into GridFS and wait for the upload to finish
+    await new Promise((resolve, reject) => {
+      readableStream
+        .pipe(uploadStream)
+        .on("error", reject)
+        .on("finish", resolve);
+    });
+
+    // Return a URL endpoint for streaming the audio from GridFS
+    // The file's ObjectId (uploadStream.id) is used in the stream route.
+    return `/audio/stream/${uploadStream.id}`;
   } catch (error) {
     console.error("❌ Error generating speech:", error);
     throw new Error("Failed to generate text-to-speech audio.");
