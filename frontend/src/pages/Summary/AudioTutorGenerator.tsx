@@ -48,7 +48,7 @@ const AudioTutorGenerator: React.FC<AudioTutorGeneratorProps> = ({ documentId })
       </h2>
       <button
         onClick={handleGenerateAudio}
-        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer"
         disabled={loading}
       >
         {loading ? "Generating..." : "Generate Audio"}
@@ -58,7 +58,7 @@ const AudioTutorGenerator: React.FC<AudioTutorGeneratorProps> = ({ documentId })
 
       {/* Only show AudioPlayer if we have an audioUrl */}
       {audioUrl && (
-        <div className="mt-4">
+        <div className="flex justify-center mt-4">
           <AudioPlayer filepath={audioUrl} />
         </div>
       )}

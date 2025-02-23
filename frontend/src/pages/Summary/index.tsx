@@ -3,6 +3,7 @@ import { IoMdArrowBack } from 'react-icons/io';
 import ExplanationText from './ExplanationText';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import ExplanationTextSkeleton from './ExplanationTextSkeleton';
 
 export default function SummaryPage() {
 	const params = useParams();
@@ -11,9 +12,11 @@ export default function SummaryPage() {
 	const id = params.id;
 	const [summaryText, setSummaryText] = useState('');
 	const [title, setTitle] = useState('');
+	const [loading, setLoading] = useState<boolean>(true);
 
 	const handleLoadText = async () => {
 		try {
+			setLoading(true);
 			const token = localStorage.getItem('token');
 			if (!token) {
 				navigate('/login');
@@ -30,6 +33,8 @@ export default function SummaryPage() {
 			setTitle(response.data.title);
 		} catch (err) {
 			console.error('❌ Error generating summary text:', err);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -47,8 +52,14 @@ export default function SummaryPage() {
 				<span className="text-xl">&nbsp; Back</span>
 			</Link>
 			<div className="grow">
-				<h1 className="text-3xl pb-4 !font-semibold">{title}</h1>
-				<ExplanationText text={summaryText} />
+				{ !loading ? <h1 className="text-3xl pb-4 !font-semibold">{title}</h1>
+					: <div className="flex w-full pt-4 pb-8 transition-colors duration-150 animate-pulse">
+							<span className='bg-gray-500 w-10/12 h-[2rem] rounded-full'></span>
+						</div>
+				}
+				{ !loading ? <ExplanationText text={summaryText} />
+					: <ExplanationTextSkeleton />
+				}
 			</div>
 		</div>
 	);
