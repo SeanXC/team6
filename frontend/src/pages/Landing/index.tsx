@@ -16,7 +16,7 @@ export default function LandingPage() {
       <main className="flex flex-col md:flex-row items-center justify-between flex-grow p-8">
         <div className="md:w-1/2 text-center md:text-left">
           <h2 className="text-6xl text-white font-bold mb-4">
-            Learn on your own terms.
+            Transform the Way You Learn with Convocraft.
           </h2>
           <p className="text-xl text-gray-300 mb-8">
             Unlock your potential with flexible, self-paced learning.
