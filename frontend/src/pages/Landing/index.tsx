@@ -28,11 +28,11 @@ export default function LandingPage() {
             Get Started
           </Link>
           <a 
-            href="https://www.youtube.com/"
+            href="https://www.youtube.com/watch?v=ZMtT2SSPatQ"
             target="_blank"
             className="inline-block px-6 py-3 ml-4 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-400 transition-colors"
           >
-            Youtube
+            Video
           </a>
         </div>
         <div className="md:w-1/2 mt-8 md:mt-0 flex ">
