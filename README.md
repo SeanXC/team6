@@ -24,16 +24,18 @@ ConvoCraft is a platform that allows users to **upload documents, extract key in
 ## **🚀 Getting Started**
 ### **1️⃣ Clone the Repository**
 ```sh
-git clone https://github.com/your-username/convo-craft-backend.git
-cd team6/backend
+git clone https://github.com/SeanXC/team6.git
+cd team6
+```
 
-2️⃣ Install Dependencies
-
+### **2️⃣ Install Backend**
+```sh
+cd backend
 npm install
+```
 
-3️⃣ Create a .env File
-
-Create a .env file in the root directory and add:
+### **3️⃣ Create a .env File**
+Create a .env file in the `/backend` directory and add:
 
 PORT=5001
 MONGO_URI=your_mongodb_connection_string
@@ -41,9 +43,23 @@ JWT_SECRET=your_jwt_secret
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 
-4️⃣ Run the Server
+### **4️⃣ Install Frontend**
+```sh
+cd ..
+cd frontend
+npm install
+```
 
+### **5️⃣ Run frontend**
+```sh
 npm run dev
+```
 
-The server should now be running on http://localhost:5001 🚀
+### **5️⃣ Run backend**
+In another terminal: 
+```sh
+cd backend
+npm run dev
+```
 
+It should now be running 🚀
