@@ -7,3 +7,8 @@ export interface User {
     token?: string;
     pfpUrl: string;
 }
+
+export interface UserInfoShort {
+    name: string;
+    pfpUrl: string;
+}

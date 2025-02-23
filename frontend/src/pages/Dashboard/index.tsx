@@ -4,17 +4,17 @@ import UploadsList from './UploadsList';
 import UserFooter from './UserFooter';
 import InfoTab from './InfoTab';
 import axios from 'axios';
-import { User } from '@/types/user';
+import { User, UserInfoShort } from '@/types/user';
 import Upload from '@pages/Upload';
 import AudioPlayer from '../Summary/AudioTutorGenerator';
 import SumerizedDocsSkeleton from './SummarizedDocsSkeleon';
 
 function Dashboard() {
 	const navigate = useNavigate();
-	const [user, setUser] = useState<{ name: string; pfpUrl: string } | null>(null);
-	const [summarizedDocs, setSummarizedDocs] = useState([]); // ✅ State for summaries
+	const [user, setUser] = useState<UserInfoShort | null>(null);
+	const [summarizedDocs, setSummarizedDocs] = useState<any[]>([]); // ✅ State for summaries
 	const [uploadShow, setUploadShow] = useState<boolean>(false);
-	const [loading, setLoading] = useState<boolean>(false)
+	const [loading, setLoading] = useState<boolean>(false);
 
 	useEffect(() => {
 		const storedUser = localStorage.getItem('user');
@@ -35,7 +35,8 @@ function Dashboard() {
 		// ✅ Fetch summarized documents
 		const fetchSummarizedDocs = async () => {
 			try {
-				setLoading(true)
+				setLoading(true);
+
 				const response = await axios.get('https://team6-production.up.railway.app/document/summarized', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
@@ -73,7 +74,7 @@ function Dashboard() {
 
 			{/* RIGHT SECTION: Info, Summaries & Audio */}
 			<div className='flex flex-col w-8/12 gap-4 p-4 pl-0 box-border'>
-				<InfoTab user={user} />
+				<InfoTab />
 
 				{/* ✅ Show Summaries & Generate Audio */}
 				<div className="bg-gray-700 p-4 rounded-xl">
@@ -87,7 +88,7 @@ function Dashboard() {
 						<ul className="space-y-6">
 							{summarizedDocs
 								.sort((a, b) => {
-									return new Date(b.createdAt).getTime() > new Date(a.createdAt).getTime();
+									return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
 								})
 								.map((doc) => (
 									<li key={doc._id} className="bg-gray-800 p-4 rounded-lg shadow-md">

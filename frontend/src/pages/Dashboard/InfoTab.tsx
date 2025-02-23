@@ -7,11 +7,11 @@ import { IoMdArrowRoundForward } from 'react-icons/io';
 
 function InfoTab() {
 	const navigate = useNavigate();
-	const storedUser = localStorage.getItem("user");
+	const storedUser = localStorage.getItem('user');
 	const user: User = storedUser ? JSON.parse(storedUser) : null;
 	const [interestsList, setInterestsList] = useState<string[]>(user.interests ?? []);
 
-	const [input, setInput] = useState<string>('')
+	const [input, setInput] = useState<string>('');
 
 	function removeItemFromList(item: string) {
 		const indexToRemove = interestsList.indexOf(item);
@@ -27,21 +27,21 @@ function InfoTab() {
 	async function sendUpdatedInterestsList(list: string[]) {
 		try {
 			const age = user.age;
-			const res = await axios.put("https://team6-production.up.railway.app/user/update-profile", { age, interests: list },
+			const res = await axios.put('https://team6-production.up.railway.app/user/update-profile', { age, interests: list },
 				{
 					headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }, // ✅ Send auth token in headers
 				}
 			);
 	
-			console.log("✅ Profile Updated:", res.data);
+			console.log('✅ Profile Updated:', res.data);
 		
 			// ✅ Update user in localStorage
-			localStorage.setItem("user", JSON.stringify(res.data.user));
+			localStorage.setItem('user', JSON.stringify(res.data.user));
 		
 			// ✅ Redirect to Dashboard
-			navigate("/dashboard");
+			navigate('/dashboard');
 		} catch (error) {
-			console.error("❌ Profile Update Error:", error);
+			console.error('❌ Profile Update Error:', error);
 		}
 	}
 

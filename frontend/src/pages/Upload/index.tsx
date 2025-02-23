@@ -1,7 +1,6 @@
 import Spinner from '@/components/Spinner';
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 type Props = {
 	closeModal: () => void;
@@ -11,12 +10,11 @@ type Props = {
 function UploadPage(props: Props) {
 	const {closeModal, setSummarizedDocs} = props; 
 	
-  const navigate = useNavigate();
 	const [file, setFile] = useState<File>();
 	const [errorMessage, setErrorMessage] = useState('');
 	const [fileSelected, setFileSelected] = useState(true);
 	const [loading, setLoading] = useState<boolean>(false)
-  const token = localStorage.getItem("token");
+  	const token = localStorage.getItem("token");
 
 	useEffect(() => {
 		setFileSelected(file !== undefined);
