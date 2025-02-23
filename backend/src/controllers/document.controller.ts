@@ -5,6 +5,13 @@ import Document from "../models/Document";
 import { askDocumentQuestion, convertTextToSpeech, generateFunExplanation, summarizeText } from "../services/ai.service";
 import User from "../models/User";
 import mongoose from "mongoose";
+import OpenAI from "openai";
+
+
+// ✅ Initialize OpenAI API
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY, 
+});
 
 // ✅ Ensure `req.user` follows the `authenticate` middleware format
 interface AuthenticatedRequest extends Request {
@@ -367,6 +374,7 @@ export const generateOrRetrieveAudioTutor: any = async (
   }
 };
 
+
 export const generateFunExplanationAPI:any = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user || !req.user.userId) {
@@ -388,10 +396,48 @@ export const generateFunExplanationAPI:any = async (req: AuthenticatedRequest, r
       return res.status(404).json({ error: "Document not found or access denied." });
     }
 
-    // ✅ Generate explanation using AI
-    const explanation = await generateFunExplanation(document.text, user.age || 18, user.interests?.join(", ") || "various topics");
+    // ✅ If the explanation already exists, return it
+    if (document.funExplanation && document.funTitle) {
+      return res.json({
+        message: "Fun explanation retrieved from database!",
+        title: document.funTitle,
+        explanation: document.funExplanation,
+      });
+    }
 
-    res.json({ message: "Fun explanation generated successfully!", explanation });
+    // ✅ Generate fun explanation using AI
+    const explanation = await generateFunExplanation(
+      document.text,
+      user.age || 18,
+      user.interests?.join(", ") || "various topics"
+    );
+
+    // ✅ Generate fun title using AI
+    const titleCompletion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { 
+          role: "system", 
+          content: `You are an AI tutor that generates fun and engaging tutorial titles. 
+          Create a catchy and exciting title for a lesson based on the following document.` 
+        },
+        { role: "user", content: document.text },
+      ],
+      max_tokens: 20, // Limit response length
+    });
+
+    const funTitle = titleCompletion.choices[0].message?.content || "Fun Learning with AI!";
+
+    // ✅ Save generated explanation and title in MongoDB
+    document.funTitle = funTitle;
+    document.funExplanation = explanation;
+    await document.save();
+
+    res.json({
+      message: "Fun explanation generated and saved successfully!",
+      title: funTitle,  // ✅ Fun AI-generated title
+      explanation,      // ✅ Fun AI-generated explanation
+    });
   } catch (error) {
     console.error("❌ Error generating explanation:", error);
     res.status(500).json({ error: "Failed to generate explanation!" });
