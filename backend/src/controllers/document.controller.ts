@@ -327,8 +327,7 @@ export const generateOrRetrieveAudioTutor: any = async (
     }
 
     const userAge = user.age || 18;
-    const userInterests =
-      user.interests?.length > 0 ? user.interests.join(", ") : "science and technology";
+    const userInterests = user.interests?.length > 0 ? user.interests.join(", ") : "science and technology";
 
     console.log("🎤 Checking audio tutorial for:", { age: userAge, interests: userInterests });
 
@@ -337,12 +336,13 @@ export const generateOrRetrieveAudioTutor: any = async (
       _id: new mongoose.Types.ObjectId(documentId),
       userId,
     });
+
     if (!document) {
       res.status(404).json({ error: "Document not found or access denied." });
       return;
     }
 
-    // If audio already exists, return the saved link
+    // ✅ If audio already exists, return the saved link
     if (document.audioUrl) {
       console.log("✅ Returning existing audio file:", document.audioUrl);
       res.json({
@@ -353,13 +353,39 @@ export const generateOrRetrieveAudioTutor: any = async (
       return;
     }
 
-    // Generate a fun, engaging explanation
-    const explanation = await generateFunExplanation(document.text, userAge, userInterests);
+    // ✅ If explanation does not exist, generate and save it
+    if (!document.funExplanation) {
+      console.log("📖 Generating fun explanation for:", document.filename);
 
-    // Convert explanation into speech (saved in GridFS)
-    const audioUrl = await convertTextToSpeech(explanation, userId, documentId);
+      const explanation = await generateFunExplanation(document.text, userAge, userInterests);
 
-    // Save the generated audio URL in the document
+      // ✅ Generate fun title
+      const titleCompletion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          { 
+            role: "system", 
+            content: `You are an AI tutor that generates fun and engaging tutorial titles. 
+            Create a catchy and exciting title for a lesson based on the following document.` 
+          },
+          { role: "user", content: document.text },
+        ],
+        max_tokens: 20, // Limit response length
+      });
+
+      const funTitle = titleCompletion.choices[0].message?.content || "Fun Learning with AI!";
+
+      // ✅ Save generated explanation and title in MongoDB
+      document.funTitle = funTitle;
+      document.funExplanation = explanation;
+      await document.save();
+    }
+
+    // ✅ Convert explanation into speech (Saved in GridFS)
+    console.log("🎤 Generating speech for:", document.funExplanation);
+    const audioUrl = await convertTextToSpeech(document.funExplanation, userId, documentId);
+
+    // ✅ Save the generated audio URL in the document
     document.audioUrl = audioUrl;
     await document.save();
 
@@ -374,8 +400,7 @@ export const generateOrRetrieveAudioTutor: any = async (
   }
 };
 
-
-export const generateFunExplanationAPI:any = async (req: AuthenticatedRequest, res: Response) => {
+export const generateFunExplanationAPI: any = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user || !req.user.userId) {
       return res.status(401).json({ error: "Unauthorized: No valid user found." });
@@ -391,12 +416,16 @@ export const generateFunExplanationAPI:any = async (req: AuthenticatedRequest, r
     }
 
     // ✅ Ensure the document belongs to the authenticated user
-    const document = await Document.findOne({ _id: new mongoose.Types.ObjectId(documentId), userId });
+    const document = await Document.findOne({
+      _id: new mongoose.Types.ObjectId(documentId),
+      userId
+    });
+
     if (!document) {
       return res.status(404).json({ error: "Document not found or access denied." });
     }
 
-    // ✅ If the explanation already exists, return it
+    // ✅ If explanation already exists, return it
     if (document.funExplanation && document.funTitle) {
       return res.json({
         message: "Fun explanation retrieved from database!",
@@ -406,6 +435,7 @@ export const generateFunExplanationAPI:any = async (req: AuthenticatedRequest, r
     }
 
     // ✅ Generate fun explanation using AI
+    console.log("📖 Generating fun explanation for:", document.filename);
     const explanation = await generateFunExplanation(
       document.text,
       user.age || 18,
@@ -435,8 +465,8 @@ export const generateFunExplanationAPI:any = async (req: AuthenticatedRequest, r
 
     res.json({
       message: "Fun explanation generated and saved successfully!",
-      title: funTitle,  // ✅ Fun AI-generated title
-      explanation,      // ✅ Fun AI-generated explanation
+      title: funTitle,
+      explanation,
     });
   } catch (error) {
     console.error("❌ Error generating explanation:", error);
