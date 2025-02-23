@@ -7,12 +7,14 @@ import axios from 'axios';
 import SummaryDisplay from '../Summary/SummaryDisplay';
 import AudioPlayer from '../Summary/AudioPlayer';
 import { User } from '@/types/user';
+import Upload from '@pages/Upload';
 
 function Dashboard() {
 	const navigate = useNavigate();
 	const [user, setUser] = useState<{ name: string; pfpUrl: string } | null>(null);
 	const [userUploads, setUserUploads] = useState([]);
 	const [summarizedDocs, setSummarizedDocs] = useState([]); // ✅ State for summaries
+	const [uploadShow, setUploadShow] = useState<boolean>(false);
 
 	useEffect(() => {
 		const storedUser = localStorage.getItem("user");
@@ -63,13 +65,13 @@ function Dashboard() {
 		<div className="flex flex-row gap-4 box-border h-full">
 			{/* LEFT SECTION: Uploads & Upload Button */}
 			<div className="flex flex-col w-4/12 box-border p-4 pr-0 gap-4">
-				<Link 
-					className='group relative bg-gradient-to-br from-blue-700 to-purple-700 p-4 rounded-xl text-center font-semibold'
-					to="/upload"
+				<button
+					className='group relative bg-gradient-to-br cursor-pointer from-blue-700 to-purple-700 p-4 rounded-xl text-center font-semibold'
+					onClick={() => setUploadShow(true)}
 				>
 					<span>Upload a PDF</span>
 					<div className='absolute top-0 left-0 w-full h-full z-[-1] rounded-xl bg-gradient-to-br from-blue-700 to-purple-700 transition-all duration-300 group-hover:blur-md'></div>
-				</Link>
+				</button>
 
 				<ul className='grow bg-gray-700 rounded-xl overflow-auto'>
 					<UploadsList uploads={userUploads} />
@@ -103,6 +105,7 @@ function Dashboard() {
 
 				<UserFooter user={user} />
 			</div>
+			{ uploadShow && <Upload closeModal={() => setUploadShow(false)} setSummarizedDocs={(docs) => setSummarizedDocs(docs)}/> }
 		</div>
 	);
 }

@@ -3,7 +3,14 @@ import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function UploadPage() {
+type Props = {
+	closeModal: () => void;
+	setSummarizedDocs: (docs: any[]) => void;
+}
+
+function UploadPage(props: Props) {
+	const {closeModal, setSummarizedDocs} = props; 
+	
   const navigate = useNavigate();
 	const [file, setFile] = useState<File>();
 	const [errorMessage, setErrorMessage] = useState('');
@@ -48,16 +55,25 @@ function UploadPage() {
 				}
 			);
 
+			const summaryRes = await axios.get(
+				"https://team6-production.up.railway.app/document/summarized",
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			);
+			// Update summaries in Dashboard via the callback
+			setSummarizedDocs(summaryRes.data.documents);
+
+			closeModal();
 			console.log("res", res.data);
-      navigate("/dashboard");
 		} catch (error) {
 			console.error("❌ Profile Update Error:", error);
 		}
 	}
 
 	return (
-		<div className="flex flex-col justify-center items-center w-full h-full">
-			<div className="w-80 h-60 bg-gray-700 rounded-xl flex flex-col items-center box-border p-4">
+		<div className="flex flex-col justify-center items-center w-full h-full absolute z-10 bg-black/50 fixed" onClick={closeModal}>
+			<div className="w-80 h-60 bg-gray-700 rounded-xl flex flex-col items-center box-border p-4" onClick={(e) => e.stopPropagation()}>
 				<div className='flex flex-row gap-4'>
 					<label htmlFor="file-upload" 
 						className="bg-cyan-800 p-4 rounded-xl cursor-pointer w-auto "
