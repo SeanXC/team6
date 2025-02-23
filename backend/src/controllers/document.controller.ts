@@ -366,3 +366,34 @@ export const generateOrRetrieveAudioTutor: any = async (
     res.status(500).json({ error: "Failed to generate or retrieve audio tutor!" });
   }
 };
+
+export const generateFunExplanationAPI:any = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user || !req.user.userId) {
+      return res.status(401).json({ error: "Unauthorized: No valid user found." });
+    }
+
+    const { documentId } = req.params;
+    const userId = req.user.userId;
+
+    // ✅ Fetch user details (age & interests)
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found!" });
+    }
+
+    // ✅ Ensure the document belongs to the authenticated user
+    const document = await Document.findOne({ _id: new mongoose.Types.ObjectId(documentId), userId });
+    if (!document) {
+      return res.status(404).json({ error: "Document not found or access denied." });
+    }
+
+    // ✅ Generate explanation using AI
+    const explanation = await generateFunExplanation(document.text, user.age || 18, user.interests?.join(", ") || "various topics");
+
+    res.json({ message: "Fun explanation generated successfully!", explanation });
+  } catch (error) {
+    console.error("❌ Error generating explanation:", error);
+    res.status(500).json({ error: "Failed to generate explanation!" });
+  }
+};
