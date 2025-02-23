@@ -73,6 +73,8 @@ function Dashboard() {
 				<ul className='grow bg-gray-700 rounded-xl overflow-auto'>
 					<UploadsList uploads={summarizedDocs} />
 				</ul>
+
+				<UserFooter user={user} />
 			</div>
 
 			{/* RIGHT SECTION: Info, Summaries & Audio */}
@@ -99,8 +101,6 @@ function Dashboard() {
 						</ul>
 					)}
 				</div>
-
-				<UserFooter user={user} />
 			</div>
 		</div>
 	);
