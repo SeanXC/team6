@@ -6,6 +6,7 @@ import { askDocumentQuestion, convertTextToSpeech, generateFunExplanation, summa
 import User from "../models/User";
 import mongoose from "mongoose";
 import OpenAI from "openai";
+import path from "path";
 
 
 // ✅ Initialize OpenAI API
@@ -471,5 +472,46 @@ export const generateFunExplanationAPI: any = async (req: AuthenticatedRequest, 
   } catch (error) {
     console.error("❌ Error generating explanation:", error);
     res.status(500).json({ error: "Failed to generate explanation!" });
+  }
+};
+
+// ✅ Delete a Document
+export const deleteDocument:any = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user || !req.user.userId) {
+      return res.status(401).json({ error: "Unauthorized: No valid user found." });
+    }
+
+    const { documentId } = req.params;
+    const userId = req.user.userId;
+
+    // ✅ Ensure the document belongs to the authenticated user
+    const document = await Document.findOne({
+      _id: new mongoose.Types.ObjectId(documentId),
+      userId
+    });
+
+    if (!document) {
+      return res.status(404).json({ error: "Document not found or access denied." });
+    }
+
+    // ✅ Remove associated audio file if exists
+    if (document.audioUrl) {
+      const audioPath = path.join(__dirname, "../../public", document.audioUrl);
+      if (fs.existsSync(audioPath)) {
+        fs.unlinkSync(audioPath);
+        console.log(`🗑️ Deleted audio file: ${audioPath}`);
+      }
+    }
+
+    // ✅ Delete the document from the database
+    await Document.deleteOne({ _id: document._id });
+
+    console.log(`🗑️ Deleted document: ${documentId}`);
+
+    res.json({ message: "Document deleted successfully!" });
+  } catch (error) {
+    console.error("❌ Error deleting document:", error);
+    res.status(500).json({ error: "Failed to delete document!" });
   }
 };
