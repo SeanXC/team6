@@ -43,6 +43,8 @@ const UploadsList = ({uploads}: UploadListProps) => {
 				<IoMdClose onClick={(e) => handleDeleteButtonPress(e, item.filename, item._id)} className="w-8 h-8 absolute right-[-2rem] top-1/2 transform translate-y-[-50%] group-hover:text-red-400 group-hover:right-[1rem] transition-all duration-150" />
 			</Link>;
 		}));
+
+		setLoaded(true);
 	}, [uploads]);
 
 	async function handleDeleteButtonPress(e: React.MouseEvent, filename: string, id: string) {
@@ -71,9 +73,13 @@ const UploadsList = ({uploads}: UploadListProps) => {
 	return (
 		<div className="flex flex-col items-center">
 			<span className='self-start text-xl px-3 py-2 border-b-[1px] border-white w-full font-semibold'>Full Explanations</span>
-			{loaded ? 
-				renderedList : 
-				<UploadListItemsSkeleton />}
+			{!loaded ? (
+				<UploadListItemsSkeleton />
+			) : renderedList && renderedList.length > 0 ? (
+				renderedList
+			) : (
+				<p className="p-4 text-gray-300">No uploads available</p>
+			)}
 		</div>
 	);
 };

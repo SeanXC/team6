@@ -39,11 +39,11 @@ function Dashboard() {
 				const response = await axios.get('https://team6-production.up.railway.app/document/summarized', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
-				setLoading(false)
-
 				setSummarizedDocs(response.data.documents);
 			} catch (error) {
 				console.error('Error fetching summaries:', error);
+			} finally {
+				setLoading(false)
 			}
 		};
 
